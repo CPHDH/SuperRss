@@ -52,8 +52,6 @@
 			$author='The '.option('site_title').' Team';
 		}
 
-				
-		//$author_url=WEB_ROOT.'/items/browse?search=&advanced[0][element_id]=39&advanced[0][type]=is+exactly&advanced[0][terms]='.urlencode($authors).'&submit_search=Search';	
 					
 		$content = metadata( $item, array( 'Dublin Core', 'Description' )) ? 
 			metadata( $item, array( 'Dublin Core', 'Description' )) : 
@@ -149,7 +147,6 @@
 	    $entry->setLink($url);
 	    $entry->addAuthor(array(
 	        'name'  => $author,
-	    //    'uri'   => $author_url,
 	    ));
 	    $entry->setDateModified(strtotime($item->modified));
 	    $entry->setDateCreated(strtotime($item->added));
