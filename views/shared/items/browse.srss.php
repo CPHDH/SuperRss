@@ -21,7 +21,7 @@
 		$app_store=array();
 		isset($adk) ? $app_store[]='<a href="http://play.google.com/store/apps/details?id='.$adk.'">Android</a>' : null;
 		isset($ios) ? $app_store[]='<a href="https://itunes.apple.com/us/app/'.$ios.'">iPhone</a>' : null;
-		$footer.='<br><small>Download the app for '.implode($app_store, ' and ').'</small>';
+		$footer.='<br><small>'.__('Download the app for %s', implode($app_store, ' and ')).'</small>';
 	}
 
 	if( ($fb=get_theme_option('facebook_link')) || ($tw=get_theme_option('twitter_username')) || ($yt=get_theme_option('youtube_username')) ){
@@ -29,7 +29,7 @@
 		isset($fb) ? $social[]='<a href="'.$fb.'">Facebook</a>' : null;
 		isset($tw) ? $social[]='<a href="https://twitter.com/'.$tw.'">Twitter</a>' : null;
 		isset($yt) ? $social[]='<a href="http://www.youtube.com/user/'.$yt.'">Youtube</a>' : null;
-		$footer.='<br><small>Find us on '.srss_oxfordComma($social).'</small>';
+		$footer.='<br><small>'.__('Find us on %s', srss_oxfordComma($social)).'</small>';
 	}
 
 	// Create the entries
@@ -113,24 +113,24 @@
 	   	   $num=count($images);
 		   $hero='<img alt="'.$images[0]['title'].'" src="'.$images[0]['fullsize'].'"/>';
 		   $content="$hero<br>$content";
-		   $fstr[]=$num.' '.($num > 1 ? 'images' : 'image');
+		   $fstr[]=$num.' '.($num > 1 ? __('images') : __('image') );
 	   }
 	   
 	   if( count($audio) >0 ){
 		   $num=count($audio);
-		   $fstr[]=$num.' '.($num > 1 ? 'sound clips' : 'sound clip');
+		   $fstr[]=$num.' '.($num > 1 ? __('sound clips') : __('sound clip') );
 	   }
 	   
 	   if( count($video) >0 ){
 		   $num=count($video);
-		   $fstr[]=$num.' '.($num > 1 ? 'videos' : 'video');
+		   $fstr[]=$num.' '.($num > 1 ? __('videos') : __('video') );
 	   }
 	   
-	   $item_file_stats=srss_oxfordComma($fstr);
+	   $item_file_stats= count($fstr) > 0 ? __(' (including %s)', srss_oxfordComma($fstr)) : null;
 
 
 
-		$content.='<p>'.__('<em><strong><a href="%2$s">For more (including %1$s), view the original article</a>.</em></strong>',$item_file_stats, $url).'</p>'.$footer;
+		$content.='<p><em><strong>'.__('<a href="%2$s">For more%1$s, view the original article</a>.',$item_file_stats, $url).'</em></strong></p>'.$footer;
 		
 
 		
