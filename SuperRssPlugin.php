@@ -1,5 +1,8 @@
 <?php
 
+require_once dirname(__FILE__) . '/helpers/SuperRssFunctions.php';
+
+
 class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
 {
    protected $_filters = array(

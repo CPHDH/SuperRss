@@ -1,0 +1,139 @@
+<?php
+
+function srss_oxfordComma($items=null) {
+    $count = count($items);
+
+    if($count === 0) {
+        return null;
+    } else if($count === 1) {
+        return $items[0];
+    } else {
+        return implode(' , ', array_slice($items, 0, $count - 1)) . ' and ' . $items[$count - 1];
+    }
+}
+
+function srss_br2p($data) {
+    $data = preg_replace('#(?:<br\s*/?>\s*?){2,}#', '</p><p>', $data);
+    return "<p>$data</p>";
+}
+
+function srss_GeoRSSPoint($item=null){
+	if( 
+	($item !==null) 
+	&& ($location = get_db()->getTable( 'Location' )->findLocationByItem( $item, true )) 
+	){
+
+	    $lat = $location['latitude'];
+	    $lon = $location['longitude'];
+		
+		return $lat.' '.$lon;
+
+	}
+}
+
+
+function srss_footer(){
+	$footer=null;
+	if( ($ios=get_theme_option('ios_app_id')) || ($adk=get_theme_option('android_app_id')) ){
+		$app_store=array();
+		isset($adk) ? $app_store[]='<a href="http://play.google.com/store/apps/details?id='.$adk.'">Android</a>' : null;
+		isset($ios) ? $app_store[]='<a href="https://itunes.apple.com/us/app/'.$ios.'">iPhone</a>' : null;
+		$footer.='<br><small>'.__('Download the app for %s', implode($app_store, ' and ')).'</small>';
+	}
+
+	if( ($fb=get_theme_option('facebook_link')) || ($tw=get_theme_option('twitter_username')) || ($yt=get_theme_option('youtube_username')) ){
+		$soial=array();
+		isset($fb) ? $social[]='<a href="'.$fb.'">Facebook</a>' : null;
+		isset($tw) ? $social[]='<a href="https://twitter.com/'.$tw.'">Twitter</a>' : null;
+		isset($yt) ? $social[]='<a href="http://www.youtube.com/user/'.$yt.'">Youtube</a>' : null;
+		$footer.='<br><small>'.__('Find us on %s', srss_oxfordComma($social)).'</small>';
+	}
+	return $footer;
+}
+
+function srss_authors($authors){
+		if(count($authors)>0){
+			$all_authors=array();
+			foreach($authors as $author){
+				$all_authors[]=$author;
+			}
+			$author=srss_oxfordComma($all_authors);
+		}else{
+			$author='The '.option('site_title').' Team';
+		}	
+		return $author;
+}
+
+function srss_media_info($item){
+		$files=array();
+		$images=array();
+		$audio=array();
+		$video=array();
+		foreach( $item->Files as $file )
+		{
+		       $path = $file->getWebPath( 'original' );
+		    
+		       $mimetype = metadata( $file, 'MIME Type' );
+		       $filedata = array(
+		          'id'        => $file->id,
+		          'mime-type' => $mimetype,
+		          );
+		    
+		       if( $ftitle = metadata( $file, array( 'Dublin Core', 'Title' ) ) ) {
+		          $filedata['title'] = strip_formatting( $ftitle );
+		       }
+		    
+		    
+		       if( $description = metadata( $file, array( 'Dublin Core', 'Description' ) ) ) {
+		          $filedata['description'] = $description;
+		       }
+		    
+		       if( $file->hasThumbnail() ) {
+		          $filedata['thumbnail'] = $file->getWebPath( 'square_thumbnail' );
+		          $filedata['fullsize'] = $file->getWebPath( 'fullsize' );
+		       }
+		       
+		       if( strpos($filedata['mime-type'], 'image/' )===0){
+			       $images[]=$filedata;
+		       }
+
+		       if( strpos($filedata['mime-type'], 'audio/' )===0){
+			       $audio[]=$filedata;
+		       }
+
+		       if( strpos($filedata['mime-type'], 'video/' )===0){
+			       $video[]=$filedata;
+		       }		       
+			   			   
+
+		}
+		
+	   $fstr=array();
+	   $hero=null;
+	   if( count($images) >0 ){
+	   	   $num=count($images);
+		   $hero='<img alt="'.$images[0]['title'].'" src="'.$images[0]['fullsize'].'"/>';
+		   $fstr[]=$num.' '.($num > 1 ? __('images') : __('image') );
+	   }
+	   
+	   if( count($audio) >0 ){
+		   $num=count($audio);
+		   $fstr[]=$num.' '.($num > 1 ? __('sound clips') : __('sound clip') );
+	   }
+	   
+	   if( count($video) >0 ){
+		   $num=count($video);
+		   $fstr[]=$num.' '.($num > 1 ? __('videos') : __('video') );
+	   }
+	   
+	   
+	   $item_file_stats= count($fstr) > 0 ? __(' (including %s)', srss_oxfordComma($fstr)) : null;
+	   
+	   $media_info=array();
+	   $media_info['stats_link']=$item_file_stats;
+	   $media_info['hero_img']=$hero ? $hero : null;
+	   
+	   return $media_info;
+	   
+	   
+}
