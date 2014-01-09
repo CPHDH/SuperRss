@@ -40,8 +40,6 @@ foreach( loop( 'items' ) as $omeka_item ) {
 		metadata( $omeka_item, array( 'Dublin Core', 'Title' ) ) :
 		'No title';
 
-	$author = srss_authors( metadata( $omeka_item, array( 'Dublin Core', 'Creator' ),array('all'=>true) ) );
-
 	$url = WEB_ROOT.'/items/show/'.$omeka_item->id;
 
 	$continue_link='<p><em><strong>'.__('<a href="%2$s">For more%1$s, view the original article</a>.',srss_media_info($omeka_item)['stats_link'], $url).'</em></strong></p>'.srss_footer();
@@ -58,7 +56,6 @@ foreach( loop( 'items' ) as $omeka_item ) {
 	$feed_item->addChild('description', $content);
 	$feed_item->addChild('link', $url);
 	$feed_item->addChild('pubDate', strtotime($omeka_item->modified) );
-	$feed_item->addChild('author', $author);
 	if($point=srss_GeoRSSPoint($omeka_item)){
 		$feed_item->addChild('point', $point, $NS['georss']);
 	}
