@@ -41,16 +41,27 @@ foreach( loop( 'items' ) as $omeka_item ) {
 		metadata( $omeka_item, array( 'Dublin Core', 'Description' )) : 
 		'No content';			
 	$content=srss_br2p($content).$continue_link;    
-    
-   
-   // Build the entry
-    $entry->addChild('title',$title);
-    $entry->addChild('guid',$item->id);
-    $entry->addChild('description', $content);
-    $entry->addChild('link', $url);
-	$entry->addChild('pubDate', strtotime($item->modified) );
-	$entry->addChild('author', $author);
-	$entry->addChild('point', srss_GeoRSSPoint($item),$NS['georss']);
+	
+   // Build the feed item
+    $feed_item->addChild('title',$title);
+    $feed_item->addChild('guid',$omeka_item->id);
+    $feed_item->addChild('description', $content);
+    $feed_item->addChild('link', $url);
+	$feed_item->addChild('pubDate', strtotime($omeka_item->modified) );
+	$feed_item->addChild('author', $author);
+    if($point=srss_GeoRSSPoint($omeka_item)){
+	    $feed_item->addChild('point', $point, $NS['georss']);
+    }
+	if($img_src=srss_media_info($omeka_item,$content)['hero_img']['src']){
+	
+		$feed_item_image = $xml->channel->item->addChild('image', '', $NS['fieldtrip']);
+		$feed_item_image->addChild('url',$img_src);
+		
+		if($img_caption=strip_tags(srss_media_info($omeka_item,$content)['hero_img']['title'])){
+			$feed_item_image->addChild('title',$img_caption);
+		}
+    }    
+	
 }
 
 // output xml
