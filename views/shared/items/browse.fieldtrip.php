@@ -4,7 +4,7 @@
 $xml = new SimpleXMLElement('<rss version="2.0" xmlns:georss="http://www.georss.org/georss" xmlns:fieldtrip="http://www.fieldtripper.com/fieldtrip_rss"></rss>');
 $NS = array( 
     'georss' => 'http://www.georss.org/georss',
-    'fieldtrip'=> 'http://www.fieldtripper.com/fieldtrip_rss'
+    'fieldtrip'=> 'http://www.fieldtripper.com/fieldtrip_rss',
 ); 
 // add channel information
 $xml->addChild('channel');
@@ -20,26 +20,25 @@ if(option('administrator_email')!=null){
 	$xml->channel->addChild('managingEditor',option('administrator_email'));
 }
 
-// query database for article data
-foreach( loop( 'items' ) as $item ) {
+// get feed item data
+foreach( loop( 'items' ) as $omeka_item ) {
     // add item element for each article
-    $entry = $xml->channel->addChild('item');
+    $feed_item = $xml->channel->addChild('item');
 
 	// Get the entry data
-	$title=  metadata( $item, array( 'Dublin Core', 'Title' ) ) ?
-	     metadata( $item, array( 'Dublin Core', 'Title' ) ) :
+	$title=  metadata( $omeka_item, array( 'Dublin Core', 'Title' ) ) ?
+	     metadata( $omeka_item, array( 'Dublin Core', 'Title' ) ) :
 	     'No title';		     
 
-	$author = srss_authors( metadata( $item, array( 'Dublin Core', 'Creator' ),array('all'=>true) ) );
+	$author = srss_authors( metadata( $omeka_item, array( 'Dublin Core', 'Creator' ),array('all'=>true) ) );
 
-	$url = WEB_ROOT.'/items/show/'.$item->id;
+	$url = WEB_ROOT.'/items/show/'.$omeka_item->id;
 	
-	$continue_link='<p><em><strong>'.__('<a href="%2$s">For more%1$s, view the original article</a>.',srss_media_info($item)['stats_link'], $url).'</em></strong></p>'.srss_footer();
+	$continue_link='<p><em><strong>'.__('<a href="%2$s">For more%1$s, view the original article</a>.',srss_media_info($omeka_item)['stats_link'], $url).'</em></strong></p>'.srss_footer();
 	
 	$content='';
-	$content=srss_media_info($item,$content)['hero_img'] ? srss_media_info($item,$content)['hero_img'].'<br/>' : null;
-	$content .= metadata( $item, array( 'Dublin Core', 'Description' )) ? 
-		metadata( $item, array( 'Dublin Core', 'Description' )) : 
+	$content .= metadata( $omeka_item, array( 'Dublin Core', 'Description' )) ? 
+		metadata( $omeka_item, array( 'Dublin Core', 'Description' )) : 
 		'No content';			
 	$content=srss_br2p($content).$continue_link;    
     

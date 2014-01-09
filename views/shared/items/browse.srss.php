@@ -34,7 +34,7 @@
 		$continue_link='<p><em><strong>'.__('<a href="%2$s">For more%1$s, view the original article</a>.',srss_media_info($item)['stats_link'], $url).'</em></strong></p>'.srss_footer();
 		
 		$content='';
-		$content=srss_media_info($item,$content)['hero_img'] ? srss_media_info($item,$content)['hero_img'].'<br/>' : null;
+		$content=srss_media_info($item,$content)['hero_img']['src'] ? '<img src="'.srss_media_info($item,$content)['hero_img']['src'].'" alt="'.srss_media_info($item,$content)['hero_img']['title'].'" /><br/>' : null;
 		$content .= metadata( $item, array( 'Dublin Core', 'Description' )) ? 
 			metadata( $item, array( 'Dublin Core', 'Description' )) : 
 			'No content';			

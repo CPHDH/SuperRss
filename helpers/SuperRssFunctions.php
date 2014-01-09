@@ -38,7 +38,7 @@ function srss_footer(){
 		$app_store=array();
 		isset($adk) ? $app_store[]='<a href="http://play.google.com/store/apps/details?id='.$adk.'">Android</a>' : null;
 		isset($ios) ? $app_store[]='<a href="https://itunes.apple.com/us/app/'.$ios.'">iPhone</a>' : null;
-		$footer.='<br><small>'.__('Download the app for %s', implode($app_store, ' and ')).'</small>';
+		$footer.='<small>'.__('Download the '.option('site_title').' app for %s', implode($app_store, ' and ')).'</small>';
 	}
 
 	if( ($fb=get_theme_option('facebook_link')) || ($tw=get_theme_option('twitter_username')) || ($yt=get_theme_option('youtube_username')) ){
@@ -112,7 +112,11 @@ function srss_media_info($item){
 	   $hero=null;
 	   if( count($images) >0 ){
 	   	   $num=count($images);
-		   $hero='<img alt="'.$images[0]['title'].'" src="'.$images[0]['fullsize'].'"/>';
+		   $hero=array(
+		   		'src'=>$images[0]['fullsize'],
+		   		'title'=>$images[0]['title'],
+		   		'link'=>'<img alt="'.$images[0]['title'].'" src="'.$images[0]['fullsize'].'"/>'
+		   );
 		   $fstr[]=$num.' '.($num > 1 ? __('images') : __('image') );
 	   }
 	   
@@ -131,7 +135,9 @@ function srss_media_info($item){
 	   
 	   $media_info=array();
 	   $media_info['stats_link']=$item_file_stats;
-	   $media_info['hero_img']=$hero ? $hero : null;
+	   $media_info['hero_img']['src']=$hero['src'] ? $hero['src'] : null;
+	   $media_info['hero_img']['title']=$hero['title'] ? $hero['title'] : null;
+	   $media_info['hero_img']['link']=$hero['link'] ? $hero['link'] : null;
 	   
 	   return $media_info;
 	   
