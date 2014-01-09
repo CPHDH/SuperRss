@@ -27,7 +27,7 @@ if(get_theme_option('apple_icon_144')!=null){
 }
 $xml->channel->addChild('pubDate', date(DateTime::RSS));
 if(option('administrator_email')!=null){
-	$xml->channel->addChild('managingEditor',option('administrator_email'));
+	$xml->channel->addChild('managingEditor',option('administrator_email').' ('.option('site_title').')');
 }
 
 // get feed item data
