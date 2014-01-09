@@ -1,11 +1,21 @@
 <?php
+// Extend SimpleXMLElement to more easily use CDATA
+// http://stackoverflow.com/questions/6260224/how-to-write-cdata-using-simplexmlelement
+class SimpleXMLExtended extends SimpleXMLElement {
+  public function addCData($cdata_text) {
+    $node = dom_import_simplexml($this); 
+    $no   = $node->ownerDocument; 
+    $node->appendChild($no->createCDATASection($cdata_text)); 
+  } 
+}
 
 // create simplexml object
-$xml = new SimpleXMLElement('<rss version="2.0" xmlns:georss="http://www.georss.org/georss" xmlns:fieldtrip="http://www.fieldtripper.com/fieldtrip_rss"></rss>');
+$xml = new SimpleXMLExtended('<rss version="2.0" xmlns:georss="http://www.georss.org/georss" xmlns:fieldtrip="http://www.fieldtripper.com/fieldtrip_rss"></rss>');
 $NS = array(
 	'georss' => 'http://www.georss.org/georss',
 	'fieldtrip'=> 'http://www.fieldtripper.com/fieldtrip_rss',
 );
+
 // add channel information
 $xml->addChild('channel');
 $xml->channel->addChild('title', option('site_title'));
