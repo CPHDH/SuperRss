@@ -55,7 +55,7 @@ foreach( loop( 'items' ) as $omeka_item ) {
 	$feed_item->addChild('guid',$omeka_item->id);
 	$feed_item->addChild('description', $content);
 	$feed_item->addChild('link', $url);
-	$feed_item->addChild('pubDate', strtotime($omeka_item->modified) );
+	$feed_item->addChild('pubDate', gmdate(DATE_RSS, strtotime($omeka_item->modified )) );
 	if($point=srss_GeoRSSPoint($omeka_item)){
 		$feed_item->addChild('point', $point, $NS['georss']);
 	}
