@@ -51,8 +51,9 @@ foreach( loop( 'items' ) as $omeka_item ) {
 	$content=srss_br2p($content).$continue_link;
 
 	// Build the feed item
-	$feed_item->addChild('title',$title);
 	$feed_item->addChild('description', $content);
+	$feed_item->title=null;
+	$feed_item->title->addCData($title);
 	$feed_item->addChild('guid',WEB_ROOT.'items/show/'.$omeka_item->id);
 	$feed_item->addChild('link', $url);
 	$feed_item->addChild('pubDate', gmdate(DATE_RSS, strtotime($omeka_item->modified )) );
