@@ -63,7 +63,7 @@ foreach( loop( 'items' ) as $omeka_item ) {
 	}
 	if($img_src=srss_media_info($omeka_item,$content)['hero_img']['src']){
 
-		$feed_item_image = $xml->channel->item->addChild('image', '', $NS['fieldtrip']);
+		$feed_item_image = $feed_item->addChild('image', '', $NS['fieldtrip']);
 		$feed_item_image->addChild('url',$img_src);
 
 		if($img_caption=strip_tags(srss_media_info($omeka_item,$content)['hero_img']['title'])){
