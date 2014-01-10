@@ -10,11 +10,7 @@ class SimpleXMLExtended extends SimpleXMLElement {
 }
 
 // create simplexml object
-$xml = new SimpleXMLExtended('<rss version="2.0" xmlns:georss="http://www.georss.org/georss" xmlns:fieldtrip="http://www.fieldtripper.com/fieldtrip_rss"></rss>');
-$NS = array(
-	'georss' => 'http://www.georss.org/georss',
-	'fieldtrip'=> 'http://www.fieldtripper.com/fieldtrip_rss',
-);
+$xml = new SimpleXMLExtended('<rss version="2.0" xmlns:fieldtrip="http://www.fieldtripper.com/fieldtrip_rss" xmlns:georss="http://www.georss.org/georss"></rss>');
 
 // add channel information
 $xml->addChild('channel');
@@ -42,7 +38,7 @@ foreach( loop( 'items' ) as $omeka_item ) {
 
 	$url = WEB_ROOT.'/items/show/'.$omeka_item->id;
 
-	$continue_link='<p><em><strong>'.__('<a href="%2$s">For more%1$s, view the original article</a>.',srss_media_info($omeka_item)['stats_link'], $url).'</em></strong></p>'.srss_footer();
+	$continue_link='<p><em>'.__('For more%s, view the original article.',srss_media_info($omeka_item)['stats_link']).'</em></p>';
 
 	$content='';
 	$content .= metadata( $omeka_item, array( 'Dublin Core', 'Description' )) ?
@@ -57,17 +53,21 @@ foreach( loop( 'items' ) as $omeka_item ) {
 	$feed_item->description=null;
 	$feed_item->description->addCData($content);
 	$feed_item->addChild('link', $url);
-	$feed_item->addChild('pubDate', gmdate(DATE_RSS, strtotime($omeka_item->modified )) );
+	$feed_item->addChild('pubDate', gmdate(DATE_RSS, strtotime($omeka_item->added )) );
 	if($point=srss_GeoRSSPoint($omeka_item)){
-		$feed_item->addChild('point', $point, $NS['georss']);
+		$feed_item->addChild('point', $point, 'http://www.georss.org/georss');
 	}
 	if($img_src=srss_media_info($omeka_item,$content)['hero_img']['src']){
 
-		$feed_item_image = $feed_item->addChild('image', '', $NS['fieldtrip']);
-		$feed_item_image->addChild('url',$img_src);
+		$feed_item_image = $feed_item->addChild('image', '', 'http://www.fieldtripper.com/fieldtrip_rss');
+
+		// fieldtrip:image requires non-namespaced children
+		// the leaves a non-validating xmlns="" for W3
+		$url=$feed_item_image->addChild('url',$img_src,''); 
+
 
 		if($img_caption=strip_tags(srss_media_info($omeka_item,$content)['hero_img']['title'])){
-			$feed_item_image->addChild('title',$img_caption);
+			$feed_item_image->addChild('title',$img_caption,'');
 		}
 	}
 
