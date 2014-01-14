@@ -15,7 +15,7 @@
             </div>
 
             <div class="inputs five columns omega">
-                <p class="explanation"><?php echo __("Link to related Facebook profile"); ?></p>
+                <p class="explanation"><?php echo __("Link to related Facebook profile (e.g. http://www.facebook.com/your_page/)"); ?></p>
 
                 <div class="input-block">
                     <input type="text" class="textinput" name="srss_facebook_link" value="<?php echo get_option('srss_facebook_link'); ?>">
@@ -57,7 +57,7 @@
             </div>
 
             <div class="inputs five columns omega">
-                <p class="explanation"><?php echo __("ID for related iOS app in App Store"); ?></p>
+                <p class="explanation"><?php echo __("ID for related app in iOS App Store (e.g. id123456789)"); ?></p>
 
                 <div class="input-block">
                     <input type="text" class="textinput" name="srss_ios_id" value="<?php echo get_option('srss_ios_id'); ?>">
@@ -71,7 +71,7 @@
             </div>
 
             <div class="inputs five columns omega">
-                <p class="explanation"><?php echo __("ID for related Android app in Google Play app market"); ?></p>
+                <p class="explanation"><?php echo __("ID for related app in Google Play app market (e.g. com.developer.your.app)"); ?></p>
 
                 <div class="input-block">
                     <input type="text" class="textinput" name="srss_android_id" value="<?php echo get_option('srss_android_id'); ?>">
@@ -103,7 +103,7 @@
             </div>
 
             <div class="inputs five columns omega">
-                <p class="explanation"><?php echo __("URL for feed image. Used for Fieldtrip output. Image must be square, e.g. 144px x 144px"); ?></p>
+                <p class="explanation"><?php echo __("URL for feed image. Used for Fieldtrip output. Image must be square, e.g. http://example.com/themes/default/images/Icon_144x144.png"); ?></p>
 
                 <div class="input-block">
                     <input type="text" class="textinput" name="srss_image_url" value="<?php echo get_option('srss_image_url'); ?>">
@@ -148,7 +148,7 @@
 
 		<div class="field">
 	        <div class="two columns alpha">
-	            <label for="srss_include_social_footer"><?php echo __('Social Media Links?'); ?></label>
+	            <label for="srss_include_social_footer"><?php echo __('Include social media links?'); ?></label>
 	        </div>
 	
 	        <div class="inputs five columns omega">
@@ -156,14 +156,14 @@
 	                    array('checked'=>(boolean)get_option('srss_include_social_footer'))); ?>
 	
 	            <p class="explanation"><?php echo __(
-	                      'If checked, RSS output will include links to configured social media profiles, e.g. "Find us on Facebook and Twitter."'
+	                      'If checked, the text of each RSS item will include links to configured social media profiles, e.g. "Find us on Facebook, Twitter and Youtube."'
 	                    ); ?></p>
 	        </div>
 		</div>
 
 		<div class="field">
 	        <div class="two columns alpha">
-	            <label for="srss_include_applink_footer"><?php echo __('App Store Links?'); ?></label>
+	            <label for="srss_include_applink_footer"><?php echo __('Include app store links?'); ?></label>
 	        </div>
 	
 	        <div class="inputs five columns omega">
@@ -171,7 +171,7 @@
 	                    array('checked'=>(boolean)get_option('srss_include_applink_footer'))); ?>
 	
 	            <p class="explanation"><?php echo __(
-	                      'If checked, RSS output will include links to configured app store downloads, e.g. "Download the app for iOS and Android."'
+	                      'If checked, the text of each RSS item will include links to configured app store downloads, e.g. "Download the [Site Title] app for iOS and Android."'
 	                    ); ?></p>
 	        </div>
 		</div>
