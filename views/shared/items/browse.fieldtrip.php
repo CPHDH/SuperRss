@@ -38,7 +38,9 @@ foreach( loop( 'items' ) as $omeka_item ) {
 
 	$url = WEB_ROOT.'/items/show/'.$omeka_item->id;
 
-	$continue_link='<p><em>'.__('For more%s, view the original article.',srss_media_info($omeka_item)['stats_link']).'</em></p>';
+	$srss_media_info=srss_media_info($omeka_item);
+	
+	$continue_link='<p><em>'.__('For more%s, view the original article.',$srss_media_info['stats_link']).'</em></p>';
 
 	$content='';
 	$content .= metadata( $omeka_item, array( 'Dublin Core', 'Description' )) ?
@@ -57,7 +59,7 @@ foreach( loop( 'items' ) as $omeka_item ) {
 	if($point=srss_GeoRSSPoint($omeka_item)){
 		$feed_item->addChild('point', $point, 'http://www.georss.org/georss');
 	}
-	if($img_src=srss_media_info($omeka_item,$content)['hero_img']['src']){
+	if($img_src=$srss_media_info['hero_img']['src']){
 
 		$feed_item_image = $feed_item->addChild('image', '', 'http://www.fieldtripper.com/fieldtrip_rss');
 
@@ -66,7 +68,7 @@ foreach( loop( 'items' ) as $omeka_item ) {
 		$url=$feed_item_image->addChild('url',$img_src,''); 
 
 
-		if($img_caption=strip_tags(srss_media_info($omeka_item,$content)['hero_img']['title'])){
+		if($img_caption=strip_tags($srss_media_info['hero_img']['title'])){
 			$feed_item_image->addChild('title',$img_caption,'');
 		}
 	}

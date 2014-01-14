@@ -36,7 +36,7 @@ foreach( loop( 'items' ) as $item )
 	$continue_link.=srss_footer();
 
 	$content='';
-	$content=srss_media_info($item,$content)['hero_img']['src'] ? '<img src="'.srss_media_info($item,$content)['hero_img']['src'].'" alt="'.srss_media_info($item,$content)['hero_img']['title'].'" /><br/>' : null;
+	$content=$srss_media_info['hero_img']['src'] ? '<img src="'.$srss_media_info['hero_img']['src'].'" alt="'.$srss_media_info['hero_img']['title'].'" /><br/>' : null;
 	$content .= metadata( $item, array( 'Dublin Core', 'Description' )) ?
 		metadata( $item, array( 'Dublin Core', 'Description' )) :
 		'No content';
