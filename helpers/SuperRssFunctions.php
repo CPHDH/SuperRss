@@ -34,20 +34,34 @@ function srss_GeoRSSPoint($item=null){
 
 function srss_footer(){
 	$footer=null;
-	if( ($ios=get_theme_option('ios_app_id')) || ($adk=get_theme_option('android_app_id')) ){
-		$app_store=array();
-		isset($adk) ? $app_store[]='<a href="http://play.google.com/store/apps/details?id='.$adk.'">Android</a>' : null;
-		isset($ios) ? $app_store[]='<a href="https://itunes.apple.com/us/app/'.$ios.'">iPhone</a>' : null;
-		$footer.='<small>'.__('Download the '.option('site_title').' app for %s', implode($app_store, ' and ')).'</small>';
+	
+	// App Store Links
+	if(get_option('srss_include_applink_footer')==1){
+		$ios=get_option('srss_ios_id');
+		$adk=get_option('srss_android_id');
+		if( $ios || $adk ){
+			$app_store=array();
+			isset($adk) ? $app_store[]='<a href="http://play.google.com/store/apps/details?id='.$adk.'">Android</a>' : null;
+			isset($ios) ? $app_store[]='<a href="https://itunes.apple.com/us/app/'.$ios.'">iPhone</a>' : null;
+			$footer.='<small>'.__('Download the '.option('site_title').' app for %s', implode($app_store, ' and ')).'</small>';
+		}
 	}
-
-	if( ($fb=get_theme_option('facebook_link')) || ($tw=get_theme_option('twitter_username')) || ($yt=get_theme_option('youtube_username')) ){
-		$soial=array();
-		isset($fb) ? $social[]='<a href="'.$fb.'">Facebook</a>' : null;
-		isset($tw) ? $social[]='<a href="https://twitter.com/'.$tw.'">Twitter</a>' : null;
-		isset($yt) ? $social[]='<a href="http://www.youtube.com/user/'.$yt.'">Youtube</a>' : null;
-		$footer.='<br><small>'.__('Find us on %s', srss_oxfordComma($social)).'</small>';
-	}
+	
+	// Social Media Links
+	if(get_option('srss_include_social_footer')==1){
+		$fb=get_option('srss_facebook_link');
+		$tw=get_option('srss_twitter_user');
+		$yt=get_option('srss_youtube_user');
+		
+		if( $fb || $tw || $yt ){
+			$social=array();
+			isset($fb) ? $social[]='<a href="'.$fb.'">Facebook</a>' : null;
+			isset($tw) ? $social[]='<a href="https://twitter.com/'.$tw.'">Twitter</a>' : null;
+			isset($yt) ? $social[]='<a href="http://www.youtube.com/user/'.$yt.'">Youtube</a>' : null;
+			$footer.='<br><small>'.__('Find us on %s', srss_oxfordComma($social)).'</small>';
+		}
+	}	
+	
 	return $footer;
 }
 
@@ -65,81 +79,84 @@ function srss_authors($authors){
 }
 
 function srss_media_info($item){
-	$files=array();
-	$images=array();
-	$audio=array();
-	$video=array();
-	foreach( $item->Files as $file )
-	{
-		$path = $file->getWebPath( 'original' );
-
-		$mimetype = metadata( $file, 'MIME Type' );
-		$filedata = array(
-			'id'        => $file->id,
-			'mime-type' => $mimetype,
-		);
-
-		if( $ftitle = metadata( $file, array( 'Dublin Core', 'Title' ) ) ) {
-			$filedata['title'] = strip_formatting( $ftitle );
+	
+	if(get_option('srss_include_mediastats_footer')==1){
+	
+		$files=array();
+		$images=array();
+		$audio=array();
+		$video=array();
+		foreach( $item->Files as $file )
+		{
+			$path = $file->getWebPath( 'original' );
+	
+			$mimetype = metadata( $file, 'MIME Type' );
+			$filedata = array(
+				'id'        => $file->id,
+				'mime-type' => $mimetype,
+			);
+	
+			if( $ftitle = metadata( $file, array( 'Dublin Core', 'Title' ) ) ) {
+				$filedata['title'] = strip_formatting( $ftitle );
+			}
+	
+	
+			if( $description = metadata( $file, array( 'Dublin Core', 'Description' ) ) ) {
+				$filedata['description'] = $description;
+			}
+	
+			if( $file->hasThumbnail() ) {
+				$filedata['thumbnail'] = $file->getWebPath( 'square_thumbnail' );
+				$filedata['fullsize'] = $file->getWebPath( 'fullsize' );
+			}
+	
+			if( strpos($filedata['mime-type'], 'image/' )===0){
+				$images[]=$filedata;
+			}
+	
+			if( strpos($filedata['mime-type'], 'audio/' )===0){
+				$audio[]=$filedata;
+			}
+	
+			if( strpos($filedata['mime-type'], 'video/' )===0){
+				$video[]=$filedata;
+			}
+	
+	
 		}
-
-
-		if( $description = metadata( $file, array( 'Dublin Core', 'Description' ) ) ) {
-			$filedata['description'] = $description;
+	
+		$fstr=array();
+		$hero=null;
+		if( count($images) >0 ){
+			$num=count($images);
+			$hero=array(
+				'src'=>$images[0]['fullsize'],
+				'title'=>$images[0]['title'],
+				'link'=>'<img alt="'.$images[0]['title'].'" src="'.$images[0]['fullsize'].'"/>'
+			);
+			$fstr[]=$num.' '.($num > 1 ? __('images') : __('image') );
 		}
-
-		if( $file->hasThumbnail() ) {
-			$filedata['thumbnail'] = $file->getWebPath( 'square_thumbnail' );
-			$filedata['fullsize'] = $file->getWebPath( 'fullsize' );
+	
+		if( count($audio) >0 ){
+			$num=count($audio);
+			$fstr[]=$num.' '.($num > 1 ? __('sound clips') : __('sound clip') );
 		}
-
-		if( strpos($filedata['mime-type'], 'image/' )===0){
-			$images[]=$filedata;
+	
+		if( count($video) >0 ){
+			$num=count($video);
+			$fstr[]=$num.' '.($num > 1 ? __('videos') : __('video') );
 		}
-
-		if( strpos($filedata['mime-type'], 'audio/' )===0){
-			$audio[]=$filedata;
-		}
-
-		if( strpos($filedata['mime-type'], 'video/' )===0){
-			$video[]=$filedata;
-		}
-
+	
+	
+		$item_file_stats= count($fstr) > 0 ? __(' (including %s)', srss_oxfordComma($fstr)) : null;
+	
+		$media_info=array();
+		$media_info['stats_link']=$item_file_stats;
+		$media_info['hero_img']['src']=$hero['src'] ? $hero['src'] : null;
+		$media_info['hero_img']['title']=$hero['title'] ? $hero['title'] : null;
+		$media_info['hero_img']['link']=$hero['link'] ? $hero['link'] : null;
+	
+		return $media_info;
 
 	}
-
-	$fstr=array();
-	$hero=null;
-	if( count($images) >0 ){
-		$num=count($images);
-		$hero=array(
-			'src'=>$images[0]['fullsize'],
-			'title'=>$images[0]['title'],
-			'link'=>'<img alt="'.$images[0]['title'].'" src="'.$images[0]['fullsize'].'"/>'
-		);
-		$fstr[]=$num.' '.($num > 1 ? __('images') : __('image') );
-	}
-
-	if( count($audio) >0 ){
-		$num=count($audio);
-		$fstr[]=$num.' '.($num > 1 ? __('sound clips') : __('sound clip') );
-	}
-
-	if( count($video) >0 ){
-		$num=count($video);
-		$fstr[]=$num.' '.($num > 1 ? __('videos') : __('video') );
-	}
-
-
-	$item_file_stats= count($fstr) > 0 ? __(' (including %s)', srss_oxfordComma($fstr)) : null;
-
-	$media_info=array();
-	$media_info['stats_link']=$item_file_stats;
-	$media_info['hero_img']['src']=$hero['src'] ? $hero['src'] : null;
-	$media_info['hero_img']['title']=$hero['title'] ? $hero['title'] : null;
-	$media_info['hero_img']['link']=$hero['link'] ? $hero['link'] : null;
-
-	return $media_info;
-
-
 }

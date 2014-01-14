@@ -16,10 +16,10 @@ $xml = new SimpleXMLExtended('<rss version="2.0" xmlns:fieldtrip="http://www.fie
 $xml->addChild('channel');
 $xml->channel->addChild('title', option('site_title'));
 $xml->channel->addChild('link', WEB_ROOT);
-$desc=get_theme_option('about') ? get_theme_option('about') : (option('description') ? option('description') : "Description is unavailable.");
+$desc=get_option('srss_about_text') ? get_option('srss_about_text') : (option('description') ? option('description') : "Description is unavailable.");
 $xml->channel->addChild('description', $desc );
-if(get_theme_option('apple_icon_144')!=null){
-	$xml->channel->addChild('image',get_theme_option('apple_icon_144'));
+if(get_option('srss_image_url')!=null){
+	$xml->channel->addChild('image',get_option('srss_image_url'));
 }
 $xml->channel->addChild('pubDate', date(DateTime::RSS));
 if(option('administrator_email')!=null){
