@@ -113,9 +113,27 @@
         
         
 
+
+
 		<div class="field">
 	        <div class="two columns alpha">
-	            <label for="srss_include_mediastats_footer"><?php echo __('Media Stats in "Read More" Link?'); ?></label>
+	            <label for="srss_include_read_more_link"><?php echo __('Include link back to item?'); ?></label>
+	        </div>
+	
+	        <div class="inputs five columns omega">
+	            <?php echo get_view()->formCheckbox('srss_include_read_more_link', true, 
+	                    array('checked'=>(boolean)get_option('srss_include_read_more_link'))); ?>
+	
+	            <p class="explanation"><?php echo __(
+	                      'If checked, the text of each RSS item will include a link back to the original, reading "For more, view the original article."'
+	                    ); ?></p>
+	        </div>
+		</div>
+
+
+		<div class="field">
+	        <div class="two columns alpha">
+	            <label for="srss_include_mediastats_footer"><?php echo __('Include media stats in "Read More" link?'); ?></label>
 	        </div>
 	
 	        <div class="inputs five columns omega">
@@ -123,7 +141,7 @@
 	                    array('checked'=>(boolean)get_option('srss_include_mediastats_footer'))); ?>
 	
 	            <p class="explanation"><?php echo __(
-	                      'If checked, RSS output will include "read more" links that contain details about media files for each item, e.g. "For more (including 8 images and 4 sound clips), view the original article."'
+	                      'If checked, the included "read more" link for each RSS item will contain details about media files for the item, e.g. "For more (including 8 images, 4 sound clips, and 1 video), view the original article."'
 	                    ); ?></p>
 	        </div>
 		</div>

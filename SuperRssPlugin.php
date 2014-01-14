@@ -12,6 +12,7 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
     const DEFAULT_IOS_APP_ID = null;
     const DEFAULT_ANDROID_APP_ID = null;
     const DEFAULT_READ_MORE = 1;
+    const DEFAULT_READ_MORE_STATS = 1;
     const DEFAULT_SOCIAL_MEDIA_LINKS = 1;
     const DEFAULT_APP_STORE_LINKS = 0;
     const DEFAULT_ABOUT_TEXT = null;
@@ -35,7 +36,8 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
         'srss_youtube_user' => self::DEFAULT_YOUTUBE_USERNAME,
         'srss_ios_id' => self::DEFAULT_IOS_APP_ID,
         'srss_android_id' => self::DEFAULT_ANDROID_APP_ID,
-        'srss_include_mediastats_footer' => self::DEFAULT_READ_MORE,
+        'srss_include_read_more_link' => self::DEFAULT_READ_MORE,
+        'srss_include_mediastats_footer' => self::DEFAULT_READ_MORE_STATS,
         'srss_include_social_footer' => self::DEFAULT_SOCIAL_MEDIA_LINKS,
         'srss_include_applink_footer' => self::DEFAULT_APP_STORE_LINKS,
         'srss_about_text' => self::DEFAULT_ABOUT_TEXT,
@@ -85,6 +87,7 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
         set_option('srss_image_url', $_POST['srss_image_url']);
         set_option('srss_include_social_footer', (int)(boolean)$_POST['srss_include_social_footer']);
         set_option('srss_include_applink_footer', (int)(boolean)$_POST['srss_include_applink_footer']);
+        set_option('srss_include_read_more_link', (int)(boolean)$_POST['srss_include_read_more_link']);
         set_option('srss_include_mediastats_footer', (int)(boolean)$_POST['srss_include_mediastats_footer']);
     }	
 

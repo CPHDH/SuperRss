@@ -31,7 +31,9 @@ foreach( loop( 'items' ) as $item )
 
 	$url = WEB_ROOT.'/items/show/'.$item->id;
 
-	$continue_link='<p><em><strong>'.__('<a href="%2$s">For more%1$s, view the original article</a>.',srss_media_info($item)['stats_link'], $url).'</em></strong></p>'.srss_footer();
+	$srss_media_info=srss_media_info($item);
+	$continue_link= (get_option('srss_include_read_more_link')==1) ? '<p><em><strong>'.__('<a href="%2$s">For more%1$s, view the original article</a>.',$srss_media_info['stats_link'], $url).'</em></strong></p>' : null;
+	$continue_link.=srss_footer();
 
 	$content='';
 	$content=srss_media_info($item,$content)['hero_img']['src'] ? '<img src="'.srss_media_info($item,$content)['hero_img']['src'].'" alt="'.srss_media_info($item,$content)['hero_img']['title'].'" /><br/>' : null;
