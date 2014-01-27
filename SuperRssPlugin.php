@@ -55,6 +55,10 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
 			'suffix' => 'fieldtrip',
 			'headers' => array( 'Content-Type' => 'text/xml' )
 		);
+		$contexts['epub'] = array(
+			'suffix' => 'epub',
+			'headers' => array( 'Content-Type' => 'text/xml' )
+		);		
 		return $contexts;
 	}
 
@@ -65,6 +69,7 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
 		{
 			$contexts['browse'][] = 'srss' ;
 			$contexts['browse'][] = 'fieldtrip' ;
+			$contexts['browse'][] = 'epub' ;
 		}
 
 		return $contexts;
