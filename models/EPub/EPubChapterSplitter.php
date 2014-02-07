@@ -1,5 +1,7 @@
 <?php
-namespace srss;
+namespace com\grandt;
+
+use DOMDocument;
 /**
  * Split an HTML file into smaller html files, retaining the formatting and structure for the individual parts.
  * What this splitter does is using DOM to try and retain any formatting in the file, including rebuilding the DOM tree for subsequent parts.
@@ -10,10 +12,10 @@ namespace srss;
  * @license GNU LGPL 2.1
  * @link http://www.phpclasses.org/package/6115
  * @link https://github.com/Grandt/PHPePub
- * @version 3.20
+ * @version 3.30
  */
 class EPubChapterSplitter {
-    const VERSION = 3.20;
+    const VERSION = 3.30;
 
     private $splitDefaultSize = 250000;
     private $bookVersion = EPub::BOOK_VERSION_EPUB2;
@@ -74,7 +76,7 @@ class EPubChapterSplitter {
             return array($chapter);
         }
 
-        $xmlDoc = new \DOMDocument();
+        $xmlDoc = new DOMDocument();
         @$xmlDoc->loadHTML($chapter);
 
         $head = $xmlDoc->getElementsByTagName("head");
@@ -169,13 +171,13 @@ class EPubChapterSplitter {
         $curFile = null;
         $curSize = 0;
 
-        $xml = new \DOMDocument('1.0', $xmlDoc->xmlEncoding);
+        $xml = new DOMDocument('1.0', $xmlDoc->xmlEncoding);
         $xml->lookupPrefix("http://www.w3.org/1999/xhtml");
         $xml->preserveWhiteSpace = false;
         $xml->formatOutput = true;
 
         for ($idx = 0; $idx < count($files); $idx++) {
-            $xml2Doc = new \DOMDocument('1.0', $xmlDoc->xmlEncoding);
+            $xml2Doc = new DOMDocument('1.0', $xmlDoc->xmlEncoding);
             $xml2Doc->lookupPrefix("http://www.w3.org/1999/xhtml");
             $xml2Doc->loadXML($newXML);
             $html = $xml2Doc->getElementsByTagName("html")->item(0);

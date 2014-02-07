@@ -1,5 +1,7 @@
 <?php
-namespace srss;
+namespace DrUUID;
+
+use Exception;
 /*
  DrUUID RFC4122 library for PHP5
 by J. King (http://jkingweb.ca/)
@@ -273,7 +275,7 @@ class UUID {
 		}
 		else if (class_exists('COM', 0)) {
 			try {
-				self::$randomSource = new \COM('CAPICOM.Utilities.1');  // See http://msdn.microsoft.com/en-us/library/aa388182(VS.85).aspx
+				self::$randomSource = new COM('CAPICOM.Utilities.1');  // See http://msdn.microsoft.com/en-us/library/aa388182(VS.85).aspx
 				self::$randomFunc = 'randomCOM';
 			}
 			catch(Exception $e) {

@@ -1,5 +1,9 @@
 <?php
-namespace srss;
+namespace com\grandt;
+
+use DOMDocument;
+use DOMNode;
+use DrUUID\UUID;
 /**
  * Create an ePub compatible book file.
  *
@@ -12,14 +16,16 @@ namespace srss;
  * @author A. Grandt <php@grandt.com>
  * @copyright 2009-2014 A. Grandt
  * @license GNU LGPL 2.1
- * @version 3.20
+ * @version 3.30
  * @link http://www.phpclasses.org/package/6115
  * @link https://github.com/Grandt/PHPePub
- * @uses Zip.php version 1.50; http://www.phpclasses.org/browse/package/6110.html or https://github.com/Grandt/PHPZip
+ * @uses Zip.php version 1.60; http://www.phpclasses.org/browse/package/6110.html or https://github.com/Grandt/PHPZip
+ * @uses GIFDecoder by László Zsidi (optional); http://www.phpclasses.org/package/3234
+ * @uses GIFEncoder by László Zsidi (optional); http://www.phpclasses.org/package/3163
  */
 class EPub {
-    const VERSION = 3.20;
-    const REQ_ZIP_VERSION = 1.50;
+    const VERSION = 3.30;
+    const REQ_ZIP_VERSION = 1.62;
 
     const IDENTIFIER_UUID = 'UUID';
     const IDENTIFIER_URI = 'URI';
@@ -73,6 +79,7 @@ class EPub {
     private $opf = NULL;
     private $ncx = NULL;
     private $isFinalized = FALSE;
+	private $isInitialized = FALSE;
     private $isCoverImageSet = FALSE;
     private $buildTOC = FALSE;
 	private $tocTitle = NULL;
@@ -100,9 +107,13 @@ class EPub {
     protected $isExifInstalled;
     protected $isFileGetContentsInstalled;
     protected $isFileGetContentsExtInstalled;
+    protected $isAnimatedGifResizeInstalled = FALSE;
 
-    private $bookRoot = "OEBPS/";
+	public $pluginDir = "extLib";
+	
     private $docRoot = NULL;
+
+	private $bookRoot = "OEBPS/";
     private $EPubMark = TRUE;
     private $generator = "";
 
@@ -114,7 +125,7 @@ class EPub {
     private $mimetypes = array(
         "js" => "application/x-javascript", "swf" => "application/x-shockwave-flash", "xht" => "application/xhtml+xml", "xhtml" => "application/xhtml+xml", "zip" => "application/zip",
         "aif" => "audio/x-aiff", "aifc" => "audio/x-aiff", "aiff" => "audio/x-aiff", "au" => "audio/basic", "kar" => "audio/midi", "m3u" => "audio/x-mpegurl", "mid" => "audio/midi", "midi" => "audio/midi", "mp2" => "audio/mpeg", "mp3" => "audio/mpeg", "mpga" => "audio/mpeg", "oga" => "audio/ogg", "ogg" => "audio/ogg", "ra" => "audio/x-realaudio", "ram" => "audio/x-pn-realaudio", "rm" => "audio/x-pn-realaudio", "rpm" => "audio/x-pn-realaudio-plugin", "snd" => "audio/basic", "wav" => "audio/x-wav",
-        "bmp" => "image/bmp", "djv" => "image/vnd.djvu", "djvu" => "image/vnd.djvu", "gif" => "image/gif", "ief" => "image/ief", "jpe" => "image/jpeg", "jpeg" => "image/jpeg", "jpg" => "image/jpeg", "pbm" => "image/x-portable-bitmap", "pgm" => "image/x-portable-graymap", "png" => "image/png", "pnm" => "image/x-portable-anymap", "ppm" => "image/x-portable-pixmap", "ras" => "image/x-cmu-raster", "rgb" => "image/x-rgb", "tif" => "image/tif", "tiff" => "image/tiff", "wbmp" => "image/vnd.wap.wbmp", "xbm" => "image/x-xbitmap", "xpm" => "image/x-xpixmap", "xwd" => "image/x-windowdump",
+        "bmp" => "image/x-windows-bmp", "cpt" => "image/tiff", "djv" => "image/vnd.djvu", "djvu" => "image/vnd.djvu", "gif" => "image/gif", "ief" => "image/ief", "jpe" => "image/jpeg", "jpeg" => "image/jpeg", "jpg" => "image/jpeg", "lbm" => "image/x-ilbm", "ilbm" => "image/x-ilbm", "pbm" => "image/x-portable-bitmap", "pgm" => "image/x-portable-graymap", "png" => "image/png", "pnm" => "image/x-portable-anymap", "ppm" => "image/x-portable-pixmap", "ras" => "image/x-cmu-raster", "rgb" => "image/x-rgb", "tif" => "image/tif", "tiff" => "image/tiff", "wbmp" => "image/vnd.wap.wbmp", "xbm" => "image/x-xbitmap", "xpm" => "image/x-xpixmap", "xwd" => "image/x-windowdump",
         "asc" => "text/plain", "css" => "text/css", "etx" => "text/x-setext", "htm" => "text/html", "html" => "text/html", "rtf" => "text/rtf", "rtx" => "text/richtext", "sgm" => "text/sgml", "sgml" => "text/sgml", "tsv" => "text/tab-seperated-values", "txt" => "text/plain", "wml" => "text/vnd.wap.wml", "wmls" => "text/vnd.wap.wmlscript", "xml" => "text/xml", "xsl" => "text/xml",
         "avi" => "video/x-msvideo", "mov" => "video/quicktime", "movie" => "video/x-sgi-movie", "mp4" => "video/mp4", "mpe" => "video/mpeg", "mpeg" => "video/mpeg", "mpg" => "video/mpeg", "mxu" => "video/vnd.mpegurl", "ogv" => "video/ogg", "qt" => "video/quicktime", "webm" => "video/webm");
 
@@ -151,8 +162,11 @@ class EPub {
             $this->log->dumpInstalledModules();
         }
 
+        if (!defined("\com\grandt\Zip::VERSION")) {
+            die("<p>EPub version " . self::VERSION . " requires Zip.php at version " . self::REQ_ZIP_VERSION . " or higher, but were unable to determine the Zip.php version.<br />You can obtain the latest version from <a href=\"http://www.phpclasses.org/browse/package/6110.html\">http://www.phpclasses.org/browse/package/6110.html</a>.</p>");
+        }
         if (Zip::VERSION < self::REQ_ZIP_VERSION) {
-            die("<p>EPub version " . self::VERSION . " requires Zip.php at version " . self::REQ_ZIP_VERSION . " or higher.<br />You can obtain the latest version from <a href=\"http://www.phpclasses.org/browse/package/6110.html\">http://www.phpclasses.org/browse/package/6110.html</a>.</p>");
+            die("<p>EPub version " . self::VERSION . " requires Zip.php at version " . self::REQ_ZIP_VERSION . " or higher, but found Zip.php version " . Zip::VERSION . ".<br />You can obtain the latest version from <a href=\"http://www.phpclasses.org/browse/package/6110.html\">http://www.phpclasses.org/browse/package/6110.html</a>.</p>");
         }
 
         include_once("EPubChapterSplitter.php");
@@ -160,7 +174,7 @@ class EPub {
         include_once("EPub.NCX.php");
         include_once("EPub.OPF.php");
 
-        $this->initialize();
+		$this->setUp();
     }
 
     /**
@@ -187,11 +201,8 @@ class EPub {
 		unset($this->tocFileName, $this->tocCssFileName);
     }
 
-	/**
-	 * initialize defaults.
-	 */
-    private function initialize() {
-        $this->referencesOrder = array(
+	private function setUp() {
+		$this->referencesOrder = array(
 			Reference::COVER => "Cover Page",
 			Reference::TITLE_PAGE => "Title Page",
 			Reference::ACKNOWLEDGEMENTS => "Acknowledgements",
@@ -209,22 +220,52 @@ class EPub {
 			Reference::LIST_OF_TABLES => "List of Tables",
 			Reference::GLOSSARY => "Glossary",
 			Reference::INDEX => "Index");
-
-        $this->docRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . "/";
+		
+        $this->docRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/';
 
         $this->isCurlInstalled = extension_loaded('curl') && function_exists('curl_version');
-        $this->isGdInstalled = extension_loaded('gd') && function_exists('gd_info');
+        $this->isGdInstalled = (extension_loaded('gd') || extension_loaded('gd2')) && function_exists('gd_info');
         $this->isExifInstalled = extension_loaded('exif') && function_exists('exif_imagetype');
         $this->isFileGetContentsInstalled = function_exists('file_get_contents');
         $this->isFileGetContentsExtInstalled = $this->isFileGetContentsInstalled && ini_get('allow_url_fopen');
-
+		
         $this->zip = new Zip();
-        $this->zip->setExtraField(FALSE);
+		$this->zip->setExtraField(FALSE);
         $this->zip->addFile("application/epub+zip", "mimetype");
         $this->zip->setExtraField(TRUE);
         $this->zip->addDirectory("META-INF");
 
-        $this->content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<container version=\"1.0\" xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\">\n\t<rootfiles>\n\t\t<rootfile full-path=\"" . $this->bookRoot . "book.opf\" media-type=\"application/oebps-package+xml\" />\n\t</rootfiles>\n</container>\n";
+		$this->ncx = new Ncx(NULL, NULL, NULL, $this->languageCode, $this->writingDirection);
+        $this->opf = new Opf();
+	}
+
+	/**
+	 * initialize defaults.
+	 */
+    private function initialize() {
+		if ($this->isInitialized) {
+			return;
+		}
+		if (strlen($this->bookRoot) != 0 && $this->bookRoot != "OEBPS/") {
+			$this->setBookRoot($this->bookRoot);
+		}
+
+		$this->isInitialized = true;
+
+		 // GIF Resize requires the GD extension to be available.
+		if ($this->isGdInstalled && $this->isGifImagesEnabled 
+				&& file_exists($this->pluginDir. "/GIFEncoder.class.php")) {
+			// GIFDecoder and GIFEncoder by László Zsidi, can be found here: 
+			// GIFDecoder: http://www.phpclasses.org/package/3234
+			// GIFEncoder: http://www.phpclasses.org/package/3163
+			include_once($this->pluginDir. "/GIFDecoder.class.php");
+			include_once($this->pluginDir. "/GIFEncoder.class.php");
+			
+			$this->isAnimatedGifResizeInstalled = class_exists("GIFDecoder") && class_exists("GIFEncoder");
+			if ($this->isAnimatedGifResizeInstalled) {
+				include_once($this->pluginDir. "/GIFTool.class.php");
+			}
+		}
 
 		if (!$this->isEPubVersion2()) {
 			$this->htmlContentHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
@@ -236,14 +277,16 @@ class EPub {
 			. "<body>\n";
 		}
 
-        $this->zip->addFile($this->content, "META-INF/container.xml", 0, NULL, FALSE);
-        $this->content = NULL;
-        $this->ncx = new Ncx(NULL, NULL, NULL, $this->languageCode, $this->writingDirection);
-        $this->opf = new Opf();
+		$content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<container version=\"1.0\" xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\">\n\t<rootfiles>\n\t\t<rootfile full-path=\"" . $this->bookRoot . "book.opf\" media-type=\"application/oebps-package+xml\" />\n\t</rootfiles>\n</container>\n";
+
+		$this->zip->addFile($content, "META-INF/container.xml", 0, NULL, FALSE);
 		$this->ncx->setVersion($this->bookVersion);
 		$this->opf->setVersion($this->bookVersion);
         $this->opf->addItem("ncx", "book.ncx", Ncx::MIMETYPE);
         $this->chapterCount = 0;
+		
+		$this->ncx->setLanguageCode($this->languageCode);
+		$this->ncx->setWritingDirection($this->writingDirection);
     }
 
     /**
@@ -259,7 +302,9 @@ class EPub {
         if ($this->isFinalized || array_key_exists($fileName, $this->fileList)) {
             return FALSE;
         }
-
+		if (!$this->isInitialized) {
+			$this->initialize();
+		}
         $fileName = $this->normalizeFileName($fileName);
 
         $compress = (strpos($mimetype, "image/") !== 0);
@@ -283,6 +328,9 @@ class EPub {
         if ($this->isFinalized || array_key_exists($fileName, $this->fileList)) {
             return FALSE;
         }
+		if (!$this->isInitialized) {
+			$this->initialize();
+		}
         $fileName = $this->normalizeFileName($fileName);
 
         if ($this->zip->addLargeFile($filePath, $this->bookRoot.$fileName)) {
@@ -693,7 +741,7 @@ class EPub {
         $xmlDoc = NULL;
 
         if ($isDocAString) {
-            $xmlDoc = new \DOMDocument();
+            $xmlDoc = new DOMDocument();
             @$xmlDoc->loadHTML($doc);
         } else {
             $xmlDoc = $doc;
@@ -721,12 +769,12 @@ class EPub {
 				}
 			}
 
-            $xml = new \DOMDocument('1.0', "utf-8");
+            $xml = new DOMDocument('1.0', "utf-8");
             $xml->lookupPrefix("http://www.w3.org/1999/xhtml");
             $xml->preserveWhiteSpace = FALSE;
             $xml->formatOutput = TRUE;
 
-            $xml2Doc = new \DOMDocument('1.0', "utf-8");
+            $xml2Doc = new DOMDocument('1.0', "utf-8");
             $xml2Doc->lookupPrefix("http://www.w3.org/1999/xhtml");
             $xml2Doc->loadXML("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n    \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\"$htmlNS>\n</html>\n");
             $html = $xml2Doc->getElementsByTagName("html")->item(0);
@@ -1098,7 +1146,7 @@ class EPub {
         }
 
         if ($mediaPath !== FALSE) {
-            $mime = $this->getMime($source);
+            $mime = $this->getMimeTypeFromExtension(pathinfo($source, PATHINFO_EXTENSION));
             $internalPath = Zip::getRelativePath("media/" . $internalPath . "/" . $internalSrc);
 			
             if (!array_key_exists($internalPath, $this->fileList) &&
@@ -1113,6 +1161,24 @@ class EPub {
         return FALSE;
     }
 
+	/**
+	 * The bookRoot is the root directory inside the ePub book, defaults to "OEBPS/"
+	 * 
+	 * @param string $bookRoot
+	 */
+	function setBookRoot($bookRoot) {
+		if ($this->isInitialized) {
+			die ("bookRoot can't be set after book initialization (first file added).");
+		}
+		$bookRoot = trim($bookRoot);
+		if (strlen($bookRoot) <= 1 || $bookRoot == '/') {
+			$bookRoot = '';
+		} else if (!$this->endsWith($bookRoot, '/')) {
+			$bookRoot .= '/';
+		}
+		$this->bookRoot = $bookRoot;
+	}
+	
     /**
      * Get Book Chapter count.
      *
@@ -1745,6 +1811,10 @@ class EPub {
 		if ($this->isEPubVersion2() || $this->isFinalized || array_key_exists($fileName, $this->fileList)) {
             return FALSE;
         }
+		if (!$this->isInitialized) {
+			$this->initialize();
+		}
+
         $fileName = Zip::getRelativePath($fileName);
         $fileName = preg_replace('#^[/\.]+#i', "", $fileName);
 
@@ -1938,7 +2008,18 @@ class EPub {
         return preg_replace('#^[/\.]+#i', "", Zip::getRelativePath($fileName));
 	}
 
-    /**
+	/**
+	 * Implementation of Java String's endWidth method.
+	 * 
+	 * @param string $haystack
+	 * @param string $needle
+	 * @return bool true or false.
+	 */
+	function endsWith($haystack, $needle) {
+		return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
+	}
+
+	/**
      * Save the ePub file to local disk.
      *
      * @param string $fileName
@@ -1955,7 +2036,7 @@ class EPub {
             $this->finalize();
         }
 
-		if (stripos(strrev($fileName), "bupe.") !== 0) {
+		if (!$this->endsWith($fileName, ".epub")) {
             $fileName .= ".epub";
         }
 
@@ -2002,10 +2083,10 @@ class EPub {
             $this->finalize();
         }
 
-        if (stripos(strrev($fileName), "bupe.") !== 0) {
+		if (!$this->endsWith($fileName, ".epub")) {
             $fileName .= ".epub";
         }
-
+		
         if (TRUE === $this->zip->sendZip($fileName, "application/epub+zip")) {
 			return $fileName;
 		}
@@ -2065,9 +2146,10 @@ class EPub {
      *
      * @param string $source Path
      * @return string mimetype, or FALSE.
+	 * @deprecated Use getMimeTypeFromExtension(string $extension) instead.
      */
     function getMime($source) {
-        return $this->mimetypes[pathinfo($source, PATHINFO_EXTENSION)];
+        return $this->getMimeTypeFromExtension(pathinfo($source, PATHINFO_EXTENSION));
     }
 
     /**
@@ -2126,12 +2208,12 @@ class EPub {
             if ($height*$ratio > $this->maxImageHeight) {
                 $ratio = $this->maxImageHeight/$height;
             }
+			//echo "<pre>\$source: $source\n\$ratio.: $ratio\n\$mime..: $mime\n\$width.: $width\n\$height: $height</pre>\n";
+			if ($ratio < 1 || empty($mime)) {
+				if ($mime == "image/png" || ($this->isGifImagesEnabled === FALSE && $mime == "image/gif")) {
+					$image_o = imagecreatefromstring($image);
+					$image_p = imagecreatetruecolor($width*$ratio, $height*$ratio);
 
-			if ($ratio < 1 || empty($mime) || ($this->isGifImagesEnabled !== FALSE && $mime == "image/gif")) {
-				$image_o = imagecreatefromstring($image);
-				$image_p = imagecreatetruecolor($width*$ratio, $height*$ratio);
-				
-				if ($mime == "image/png") {
 					imagealphablending($image_p, false);
 					imagesavealpha($image_p, true);  
 					imagealphablending($image_o, true);
@@ -2142,19 +2224,55 @@ class EPub {
 					$image = ob_get_contents();
 					ob_end_clean();
 
+					imagedestroy($image_o);
+					imagedestroy($image_p);
+
 					$ext = "png";
-				} else {
+				} else if ($this->isGifImagesEnabled !== FALSE && $mime == "image/gif") {
+					$image_o = imagecreatefromstring($image);
+					$image_p = imagecreatetruecolor($width*$ratio, $height*$ratio);
+
+					imagealphablending($image_p, false);
+					imagesavealpha($image_p, true);  
+					imagealphablending($image_o, true);
+					
+					imagecopyresampled($image_p, $image_o, 0, 0, 0, 0, ($width*$ratio), ($height*$ratio), $width, $height);
+					ob_start();
+					imagegif($image_p, NULL);
+					$image = ob_get_contents();
+					ob_end_clean();
+
+					imagedestroy($image_o);
+					imagedestroy($image_p);
+
+					$ext = "gif";
+/*
+					} else if ($this->isGifImagesEnabled !== FALSE && $mime == "image/gif" && file_exists($this->pluginDir . "/GIFTool.class.php")) {
+					include_once($this->pluginDir . "/GIFTool.class.php");
+					if ($this->isAnimatedGifResizeInstalled) {
+						$image = GIFTool::resizeAnimatedGif($image, $width, $height, $ratio);
+					} else {
+						$image = GIFTool::resizeGif($image, $width, $height, $ratio);
+					}
+					$ext = "gif";
+*/
+  				} else {
+ 
+					$image_o = imagecreatefromstring($image);
+					$image_p = imagecreatetruecolor($width*$ratio, $height*$ratio);
+					
 					imagecopyresampled($image_p, $image_o, 0, 0, 0, 0, ($width*$ratio), ($height*$ratio), $width, $height);
 					ob_start();
 					imagejpeg($image_p, NULL, 80);
 					$image = ob_get_contents();
 					ob_end_clean();
 
+					imagedestroy($image_o);
+					imagedestroy($image_p);
+
 					$mime = "image/jpeg";
 					$ext = "jpg";
 				}
-				imagedestroy($image_o);
-				imagedestroy($image_p);
 			}
         }
 
@@ -2199,7 +2317,7 @@ class EPub {
 		    curl_setopt($ch, CURLOPT_HEADER, 0); 
             curl_setopt($ch, CURLOPT_URL, str_replace(" ","%20",$source));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+			// curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 			curl_setopt($ch, CURLOPT_BUFFERSIZE, 4096);
 			
 			if ($toTempFile) {
@@ -2290,27 +2408,10 @@ class EPub {
 	 * @return string MimeType
 	 */
 	function getMimeTypeFromExtension($ext) {
-		switch ($ext) {
-			case "jpg":
-			case "jpe":
-			case "jpeg":
-				return 'image/jpeg';
-			case "gif":
-				return 'image/gif';
-			case "png":
-				return 'image/png';
-			case "bmp":
-				return 'image/x-windows-bmp';
-			case "tif":
-			case "tiff":
-			case "cpt":
-				return 'image/tiff';
-			case "lbm":
-			case "ilbm":
-				return 'image/x-ilbm';
-			default:
-				return "application/octet-stream";
+		if (array_key_exists($ext, $this->mimetypes)) {
+			return $this->mimetypes[$ext];
 		}
+		return "application/octet-stream";
 	}
 
     /**
