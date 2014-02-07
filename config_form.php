@@ -7,112 +7,10 @@
 
 <body>
     <div class="field">
-        <h2>Configurations</h2>
-
-        <div class="field">
-            <div class="two columns alpha">
-                <label for="srss_facebook_link"><?php echo __('Facebook Link'); ?></label>
-            </div>
-
-            <div class="inputs five columns omega">
-                <p class="explanation"><?php echo __("Link to related Facebook profile (e.g. http://www.facebook.com/your_page/)"); ?></p>
-
-                <div class="input-block">
-                    <input type="text" class="textinput" name="srss_facebook_link" value="<?php echo get_option('srss_facebook_link'); ?>">
-                </div>
-            </div>
-        </div>
-
-        <div class="field">
-            <div class="two columns alpha">
-                <label for="srss_twitter_user"><?php echo __('Twitter Username'); ?></label>
-            </div>
-
-            <div class="inputs five columns omega">
-                <p class="explanation"><?php echo __("Twitter username (omit the @ symbol)"); ?></p>
-
-                <div class="input-block">
-                    <input type="text" class="textinput" name="srss_twitter_user" value="<?php echo get_option('srss_twitter_user'); ?>">
-                </div>
-            </div>
-        </div>
-
-        <div class="field">
-            <div class="two columns alpha">
-                <label for="srss_youtube_user"><?php echo __('Youtube Username'); ?></label>
-            </div>
-
-            <div class="inputs five columns omega">
-                <p class="explanation"><?php echo __("Youtube username"); ?></p>
-
-                <div class="input-block">
-                    <input type="text" class="textinput" name="srss_youtube_user" value="<?php echo get_option('srss_youtube_user'); ?>">
-                </div>
-            </div>
-        </div>
-
-        <div class="field">
-            <div class="two columns alpha">
-                <label for="srss_ios_id"><?php echo __('iOS App Store ID'); ?></label>
-            </div>
-
-            <div class="inputs five columns omega">
-                <p class="explanation"><?php echo __("ID for related app in iOS App Store (e.g. id123456789)"); ?></p>
-
-                <div class="input-block">
-                    <input type="text" class="textinput" name="srss_ios_id" value="<?php echo get_option('srss_ios_id'); ?>">
-                </div>
-            </div>
-        </div>
-
-        <div class="field">
-            <div class="two columns alpha">
-                <label for="srss_android_id"><?php echo __('Android App ID'); ?></label>
-            </div>
-
-            <div class="inputs five columns omega">
-                <p class="explanation"><?php echo __("ID for related app in Google Play app market (e.g. com.developer.your.app)"); ?></p>
-
-                <div class="input-block">
-                    <input type="text" class="textinput" name="srss_android_id" value="<?php echo get_option('srss_android_id'); ?>">
-                </div>
-            </div>
-        </div>
-
-
-
-        <div class="field">
-            <div class="two columns alpha">
-                <label for="srss_about_text"><?php echo __('About Text'); ?></label>
-            </div>
-
-            <div class="inputs five columns omega">
-                <p class="explanation"><?php echo __("Enter text describing your site (used for Fieldtrip output)"); ?></p>
-
-                <div class="input-block">
-                    <textarea cols="50" rows="4" class="textinput" name="srss_about_text"><?php echo get_option('srss_about_text'); ?></textarea>
-                </div>
-            </div>
-        </div>
-
-
-
-        <div class="field">
-            <div class="two columns alpha">
-                <label for="srss_android_id"><?php echo __('Feed Image URL'); ?></label>
-            </div>
-
-            <div class="inputs five columns omega">
-                <p class="explanation"><?php echo __("URL for feed image. Used for Fieldtrip output. Image must be square, e.g. http://example.com/themes/default/images/Icon_144x144.png"); ?></p>
-
-                <div class="input-block">
-                    <input type="text" class="textinput" name="srss_image_url" value="<?php echo get_option('srss_image_url'); ?>">
-                </div>
-            </div>
-        </div>
+        <h2><?php echo __('Configurations'); ?></h2>
         
         
-
+        <h3><?php echo __('General Settings'); ?></h3>
 
 
 		<div class="field">
@@ -174,28 +72,279 @@
 	                      'If checked, the text of each RSS item will include links to configured app store downloads, e.g. "Download the [Site Title] app for iOS and Android."'
 	                    ); ?></p>
 	        </div>
-		</div>
+		</div>        
+        
+        
+        
+        <h3><?php echo __('Social Media Accounts'); ?></h3>
 
-        <h2>Usage</h2>
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_facebook_link"><?php echo __('Facebook Link'); ?></label>
+            </div>
 
-        <p>The SuperRSS plugin adds 2 new output contexts to your site's browse views:</p>
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("URL of related Facebook profile"); ?></p>
 
+                <div class="input-block">
+                    <input type="text" class="textinput" name="srss_facebook_link" value="<?php echo get_option('srss_facebook_link'); ?>">
+                    <small><?php echo __("Example: http://www.facebook.com/your_page/"); ?></small>
+                </div>
+            </div>
+        </div>
+
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_twitter_user"><?php echo __('Twitter Username'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("Twitter username"); ?></p>
+
+                <div class="input-block">
+                    <input type="text" class="textinput" name="srss_twitter_user" value="<?php echo get_option('srss_twitter_user'); ?>">
+                    <small><?php echo __('Note: Please <em>do not</em> include the @ symbol');?></small>
+                </div>
+            </div>
+        </div>
+
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_youtube_user"><?php echo __('Youtube Username'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("Youtube username"); ?></p>
+
+                <div class="input-block">
+                    <input type="text" class="textinput" name="srss_youtube_user" value="<?php echo get_option('srss_youtube_user'); ?>">
+                </div>
+            </div>
+        </div>
+
+
+		<h3><?php echo __('App Store Details'); ?></h3>
+		
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_ios_id"><?php echo __('iOS App Store ID'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("ID for related app in iOS App Store"); ?></p>
+
+                <div class="input-block">
+                    <input type="text" class="textinput" name="srss_ios_id" value="<?php echo get_option('srss_ios_id'); ?>">
+                    <small><?php echo __('Example: id123456789');?></small>
+                </div>
+            </div>
+        </div>
+
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_android_id"><?php echo __('Android App ID'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("ID for related app in Google Play app market"); ?></p>
+
+                <div class="input-block">
+                    <input type="text" class="textinput" name="srss_android_id" value="<?php echo get_option('srss_android_id'); ?>">
+                    <small><?php echo __('Example: com.developer.your.app');?></small>
+                </div>
+            </div>
+        </div>
+
+
+
+        <h3><?php echo __('FieldTrip Settings'); ?></h3>
+        <p><?php echo __('In addition to a custom RSS feed, SuperRSS allows site administrators to expose a content feed that is usable by the <a href="http://www.fieldtripper.com" target="_blank">Field Trip app</a>. Inclusion in Field Trip requires a content agreement with Google Inc. The following settings are required to create a valid Field Trip feed.'); ?></p>
+
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_about_text"><?php echo __('About Text'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("Enter text describing your content for Fieldtrip feed."); ?></p>
+
+                <div class="input-block">
+                    <textarea cols="50" rows="4" class="textinput" name="srss_about_text"><?php echo get_option('srss_about_text'); ?></textarea>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_image_url"><?php echo __('Feed Image URL'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("URL for Fieldtrip feed image. Image <em>must be square</em>."); ?></p>
+
+                <div class="input-block">
+                    <input type="text" class="textinput" name="srss_image_url" value="<?php echo get_option('srss_image_url'); ?>">
+                    <small><?php echo __('Example: http://example.com/themes/default/images/Icon_144x144.png'); ?></small>
+                </div>
+            </div>
+        </div>
+        
+        
+        <h3><?php echo __('Epub Export Settings'); ?></h3>
+        <p><?php echo __('SuperRSS also allows logged-in users to export publicly-accessible items as an ebook file in the EPUB format.'); ?></p>
+
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_book_title"><?php echo __('Book Title'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("Enter a title for the ebook"); ?></p>
+
+                <div class="input-block">
+                    <input type="text" class="textinput" name="srss_book_title" value="<?php echo get_option('srss_book_title'); ?>">
+                </div>
+            </div>
+        </div>
+
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_book_description"><?php echo __('Book Description'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("Enter text describing your ebook."); ?></p>
+
+                <div class="input-block">
+                    <textarea cols="50" rows="4" class="textinput" name="srss_book_description"><?php echo get_option('srss_book_description'); ?></textarea>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_book_author"><?php echo __('Book Author'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("Enter the name of the primary author."); ?></p>
+
+                <div class="input-block">
+                    <input type="text" class="textinput" name="srss_book_author" value="<?php echo get_option('srss_book_author'); ?>">
+                    <small><?php echo __('Example: Jane A. Doe');?></small>
+                </div>
+            </div>
+        </div>        
+        
+
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_book_author_sort"><?php echo __('Book Author (Sort)'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("Enter the name of the primary author as it should be sorted (typically, lastname first)."); ?></p>
+
+                <div class="input-block">
+                    <input type="text" class="textinput" name="srss_book_author_sort" value="<?php echo get_option('srss_book_author_sort'); ?>">
+                    <small><?php echo __('Example: Doe, Jane A.');?></small>
+                </div>
+            </div>
+        </div>   
+
+
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_book_publisher"><?php echo __('Book Publisher'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("Enter the name of the book publisher."); ?></p>
+
+                <div class="input-block">
+                    <input type="text" class="textinput" name="srss_book_publisher" value="<?php echo get_option('srss_book_publisher'); ?>">
+                </div>
+            </div>
+        </div>
+        
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_book_publisher_url"><?php echo __('Book Publisher URL'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("Enter the URL for the book publisher."); ?></p>
+
+                <div class="input-block">
+                    <input type="text" class="textinput" name="srss_book_publisher_url" value="<?php echo get_option('srss_book_publisher_url'); ?>">
+                </div>
+            </div>
+        </div>      
+        
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_book_rights"><?php echo __('Book Copyright'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("Enter a rights statement for the book."); ?></p>
+
+                <div class="input-block">
+                    <input type="text" class="textinput" name="srss_book_rights" value="<?php echo get_option('srss_book_rights'); ?>">
+                    <small><?php echo __('Example: "This work is licensed by CSU Center for Public History + Digital Humanities under a Creative Commons Attribution-NonCommercial 4.0 International License." <br>Default: "Copyright %1s %2s"', date('Y'),get_option('site_title'));?></small>
+                </div>
+            </div>
+        </div>       
+         
+         <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_book_subjects"><?php echo __('Book Subjects'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("Enter keywords or subject terms for the book, separating each term with a | pipe."); ?></p>
+
+                <div class="input-block">
+                    <input type="text" class="textinput" name="srss_book_subjects" value="<?php echo get_option('srss_book_subjects'); ?>">
+                    <small><?php echo __('Example: "Galleries | Libraries | Archives | Museums | GLAM"');?></small>
+                </div>
+            </div>
+        </div>
+
+         <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_book_cover_image_url"><?php echo __('Book Cover Image URL'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("Enter the full URL path to a JPEG formatted cover image."); ?></p>
+
+                <div class="input-block">
+                    <input type="text" class="textinput" name="srss_book_cover_image_url" value="<?php echo get_option('srss_book_cover_image_url'); ?>">
+                    <small><?php echo __('Example: http://example.com/images/cover.jpg');?></small>
+                </div>
+            </div>
+        </div>        
+        
+                       
+        <h2>Usage Information</h2>
+        <p>The SuperRSS plugin adds 3 new output contexts to your site's browse views:</p>
         <ul>
             <li>RSS/Atom output is available at: <?php echo '<a target="_blank" href="'.WEB_ROOT.'/items/browse?output=srss">/items/browse?output=srss</a>';?></li>
 
             <li>Fieldtrip output is available at: <?php echo '<a target="_blank" href="'.WEB_ROOT.'/items/browse?output=fieldtrip">/items/browse?output=fieldtrip</a>';?></li>
-        </ul><strong>Include the RSS link in theme header</strong>: currently, the RSS feed must be manually added to your site's theme header:<br>
+            
+			<li>Epub output is available at: <?php echo '<a target="_blank" href="'.WEB_ROOT.'/items/browse?output=epub">/items/browse?output=epub</a>';?></li> 
+        </ul>
+        
+        <strong>Include the RSS link in theme header</strong>: currently, the RSS feed must be manually added to your site's theme header:<br>
         <br>
         <span style="display:block;padding:.25em;background:#333;color:#fafafa;font-family:monospace"><?php echo htmlentities('<link rel="alternate" type="application/rss+xml" title="New Posts: RSS" href="/items/browse?output=srss&per_page=15" />');?></span><br>
         ...best practice is to use PHP to check that the plugin is active:<br>
         <br>
-        <span style="display:block;padding:.25em;background:#333;color:#fafafa;font-family:monospace"><?php echo htmlentities("
-<?php
-if(plugin_is_active('SuperRSS')){ 
-echo '<link rel=\"alternate\" type=\"application/rss+xml\" title=\"New Posts: RSS\" href=\"'. html_escape(items_output_url('srss')) .'&per_page=15\" />';
-}
-?>
-");?></span><br>
+        <span style="display:block;padding:.25em;background:#333;color:#fafafa;font-family:monospace"><?php echo htmlentities("<?php if(plugin_is_active('SuperRSS')){ echo '<link rel=\"alternate\" type=\"application/rss+xml\" title=\"New Posts: RSS\" href=\"'. html_escape(items_output_url('srss')) .'&per_page=15\" />';}?>");?></span><br>
         <strong>Note on Fieldtrip output</strong>: the Fieldtrip output is useful for integrating your site content with Google's Fieldtrip app. Inclusion in Fieldtrip requires a contract with Google.
         <p>
     </div>
