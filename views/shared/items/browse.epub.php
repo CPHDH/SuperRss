@@ -1,25 +1,65 @@
 <?php 
-// Include the Epub PHP class, via https://github.com/Grandt/PHPePub
-// Note the namespace
-namespace srss;
+// use namespaces
+use com\grandt\DublinCore;
+use com\grandt\EPub;
+use com\grandt\EPubChapterSplitter;
+use com\grandt\Logger;
+use com\grandt\Zip;
 
-// error reporting
+
+// Logged-in users only!!!!
+if(!is_allowed('Items', 'showNotPublic')){
+	exit;
+}
+
 error_reporting(E_ALL | E_STRICT);
 ini_set('error_reporting', E_ALL | E_STRICT);
 ini_set('display_errors', 1);
 
-// misc vars
+// include EPub class
 $plugin_root=$_SERVER['DOCUMENT_ROOT'].'/plugins/SuperRss';
 require_once "$plugin_root/models/EPub/EPub.php";
-$loggerClass="$plugin_root/models/EPub/Logger.php";
-$cover_img = "$plugin_root/views/shared/items/assets/cover-image_blank.jpg";
-$site_url = "http://omeka-upgrade.clevelandhistorical.co";
-$date=time();
+
+// site settings and misc. variables
+$date = date('l\, jS \of F\, Y h:i:s A');
+
+$site_url = WEB_ROOT;
+
+$parsed_url=parse_url($site_url);
+
+$page_request_url = srss_get_page_url();
+
+$site_title = option('site_title') ? option('site_title') : '[Untitled]';
+
+$site_description = option('description') ? option('description') : '[Description Missing]';
+
+$site_owner = option('author') ? option('author') : $site_title;
+
+$filename = str_replace(' ', '_', $site_title).'-exported_'.time();
+
+// book-related plugin settings and fallbacks
+$book_title = get_option('srss_book_title') ? get_option('srss_book_title') : $site_title;
+
+$book_author = get_option('srss_book_author') ? get_option('srss_book_author') : $site_owner;
+
+$book_author_sort = get_option('srss_book_author_sort') ? get_option('srss_book_author_sort') : $book_author;
+
+$book_description = get_option('srss_book_description') ? get_option('srss_book_description') : $site_description;
+
+$book_publisher = get_option('srss_book_publisher') ? get_option('srss_book_publisher')  : $site_title;
+
+$book_publisher_url = get_option('srss_book_publisher_url') ? get_option('srss_book_publisher_url') : $site_url;
+
+$book_rights = get_option('srss_book_rights') ? get_option('srss_book_rights') : date('Y').' '.$site_owner;
+
+$book_subjects = get_option('srss_book_subjects') ? explode( '|', get_option('srss_book_subjects') ) : null;
+
+$book_cover_img = ( ( get_option('srss_book_cover_image_url') ) && ( exif_imagetype( get_option('srss_book_cover_image_url') ) == IMAGETYPE_JPEG ) ) ? get_option('srss_book_cover_image_url') : "$plugin_root/views/shared/items/assets/cover-image_blank.jpg";
 
 // set up logging
-date_default_timezone_set('America/New_York');
-require_once $loggerClass;
-$log = new Logger("My Log", TRUE);
+// date_default_timezone_set('America/New_York');
+// require_once "$plugin_root/models/EPub/Logger.php";
+// $log = new Logger("My Log", TRUE);
 
 // Wrapper
 // ePub uses XHTML 1.1, preferably strict
@@ -38,123 +78,120 @@ $end = "</body>\n</html>";
 
 // Create the book object
 $book= new EPub();
-$log->logLine("instantiate epub class");
+// $log->logLine("instantiate epub class");
 
 // Title
-$book->setTitle("Test book");
-$log->logLine("set title");
+$book->setTitle($book_title);
+// $log->logLine("set title");
 
 // Identifier
-$book->setIdentifier($site_url, EPub::IDENTIFIER_URI); 
-$log->logLine("set identifier");
+$book->setIdentifier($page_request_url, EPub::IDENTIFIER_URI); 
+// $log->logLine("set identifier");
 
 // Language
 $book->setLanguage("en"); 
-$log->logLine("set language");
+// $log->logLine("set language");
 
 // Description
-$book->setDescription("Blah blah blah");
-$log->logLine("set description");
+$book->setDescription($book_description);
+// $log->logLine("set description");
 
 // Author
-$book->setAuthor("Erin J. Bell", "Bell, Erin J.");
-$log->logLine("set author and author sort key");
+$book->setAuthor($book_author, $book_author_sort);
+// $log->logLine("set author and author sort key");
 
 // Publisher
-$book->setPublisher("Curatescape", "http://curatescape.org/"); 
-$log->logLine("set publisher");
+$book->setPublisher($book_publisher, $book_publisher_url); 
+// $log->logLine("set publisher");
 
 // Date
 $book->setDate($date); 
-$log->logLine("set date");
+// $log->logLine("set date");
 
 // Rights statement
-$book->setRights("Creative Commons By-NC-SA"); 
-$log->logLine("set rights");
+$book->setRights($book_rights); 
+// $log->logLine("set rights");
 
 // Source
 $book->setSourceURL($site_url);
-$log->logLine("set source");
+// $log->logLine("set source");
+
 
 // Keyword/subject metadata
-$book->addDublinCoreMetadata(DublinCore::CONTRIBUTOR, "Foo");
-	$log->logLine("set contributor");
-$book->setSubject("Lorem");
-$book->setSubject("Ipsum");
-$book->setSubject("Test");
-	$log->logLine("set subjects");
-
-
-
-// Custom application metadata
-$book->addCustomMetadata("calibre:series", "My Series");
-$book->addCustomMetadata("calibre:series_index", "1");
-$log->logLine("set calibre metadata");
+if(is_array($book_subjects)){
+	foreach($book_subjects as $subject){
+		$book->setSubject($subject);
+	}
+}
+// $log->logLine("set subjects");
 
 
 // CSS
-$cssData = "body{}";
+$cssData = ".ch_title{page-break-before:always}";
 
 $book->addCSSFile("styles.css", "css1", $cssData);
-$log->logLine("add css");
+// $log->logLine("add css");
 
 // Cover image
-$book->setCoverImage("Cover.jpg", file_get_contents($cover_img), "image/jpeg");
-$log->logLine("set cover image");
+$book->setCoverImage("Cover.jpg", file_get_contents($book_cover_img), "image/jpeg");
+// $log->logLine("set cover image");
 
 // Title page
-$titlePage = $start . "<h1>Title Page Title</h1>\n<h2>By Title Page Author</h2>\n" . $end;
+$titlePage = $start . "<h1>$book_title</h1>\n<h2>By $book_author</h2>\n<small>Generated at ".$parsed_url['host']." on $date.</small>" . $end;
 $book->addChapter("Title Page", "TitlePage.html", $titlePage);
-$log->logLine("add title page");
+// $log->logLine("add title page");
 
 // TOC
-//$book->buildTOC(NULL, "toc", "Table of Contents", TRUE, TRUE);
-//$log->logLine("add TOC");
+$book->buildTOC(NULL, "toc", "Table of Contents", TRUE, TRUE);
+// $log->logLine("add TOC");
 
+// Build the chapters
+$chapterIndex=1;
+foreach( loop( 'items' ) as $item ){
 
-// Chapter 1
-$chapter1 = $start . "<h1>Chapter 1</h1>\n"
-    . "<h2>Lorem ipsum</h2>\n"
-    . "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec magna lorem, mattis sit amet porta vitae, consectetur ut eros. Nullam id mattis lacus. In eget neque magna, congue imperdiet nulla. Aenean erat lacus, imperdiet a adipiscing non, dignissim eget felis. Nulla facilisi. Vivamus sit amet lorem eget mauris dictum pharetra. In mauris nulla, placerat a accumsan ac, mollis sit amet ligula. Donec eget facilisis dui. Cras elit quam, imperdiet at malesuada vitae, luctus id orci. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Pellentesque eu libero in leo ultrices tristique. Etiam quis ornare massa. Donec in velit leo. Sed eu ante tortor.</p>\n"
-    . "<p><img src=\"http://www.grandt.com/ePub/AnotherHappilyMarriedCouple.jpg\" alt=\"Test Image retrieved off the internet: Another happily married couple\" />Nullam at tempus enim. Nunc et augue non lectus consequat rhoncus ac a odio. Morbi et tellus eget nisi volutpat tincidunt. Curabitur tristique neque tincidunt purus blandit bibendum. Maecenas eleifend sem quis magna semper id pulvinar nisi porttitor. In in lectus accumsan eros tristique pharetra sit amet ac nulla. Nam vitae felis et orci congue porta nec non ipsum. Donec pretium blandit accumsan. In aliquam lacinia nisi, ut venenatis mauris condimentum ut. Morbi rutrum orci et nisl accumsan euismod. Etiam viverra luctus sem pellentesque suscipit. Aliquam ultricies egestas risus at eleifend. Ut lacinia, tortor non varius malesuada, massa diam aliquet augue, vitae tempor metus tellus eget diam. Nulla vel augue eu elit adipiscing egestas. Duis et nulla est, ac congue arcu. Phasellus semper, ipsum et blandit rutrum, erat ante semper quam, at iaculis quam tellus sed neque.</p>\n"
-    . $end;
-	$book->addChapter("Chapter 1: Lorem ipsum", "Chapter001.html", $chapter1, true, EPub::EXTERNAL_REF_ADD);
-	$log->logLine("add ch. 1");
+	if( ($item->public) == 1 ){
+		
+		$chapterIndexPadded=str_pad($chapterIndex, 5, "0", STR_PAD_LEFT);
+		$chapterTitle=metadata($item,array('Dublin Core','Title'), array('index'=>0));
+		
+		$srss_media_info=srss_media_info($item);
+		$url = WEB_ROOT.'/items/show/'.$item->id;
+		$continue_link= (get_option('srss_include_read_more_link')==1) ? '<p><em><strong>'.__('<a href="%2$s">For more%1$s, view the original article</a>.',$srss_media_info['stats_link'], $url).'</strong></em></p>' : null;
+	
+		$content='';
+		$content=$srss_media_info['hero_img']['src'] ? '<img src="'.$srss_media_info['hero_img']['src'].'" alt="'.$srss_media_info['hero_img']['title'].'" /><br/>' : null;
+		$content .= metadata( $item, array( 'Dublin Core', 'Description' ));
 
-// Chapter 2
-$chapter2 = $start . "<h1>Chapter 2</h1>\n"
-    . "<h2>Lorem ipsum</h2>\n"
-    . "<h3>Chapter Author</h3>\n"
-    . "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec magna lorem, mattis sit amet porta vitae, consectetur ut eros. Nullam id mattis lacus. In eget neque magna, congue imperdiet nulla. Aenean erat lacus, imperdiet a adipiscing non, dignissim eget felis. Nulla facilisi. Vivamus sit amet lorem eget mauris dictum pharetra. In mauris nulla, placerat a accumsan ac, mollis sit amet ligula. Donec eget facilisis dui. Cras elit quam, imperdiet at malesuada vitae, luctus id orci. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Pellentesque eu libero in leo ultrices tristique. Etiam quis ornare massa. Donec in velit leo. Sed eu ante tortor.</p>\n"
-    . "<p>Nullam at tempus enim. Nunc et augue non lectus consequat rhoncus ac a odio. Morbi et tellus eget nisi volutpat tincidunt. Curabitur tristique neque tincidunt purus blandit bibendum. Maecenas eleifend sem quis magna semper id pulvinar nisi porttitor. In in lectus accumsan eros tristique pharetra sit amet ac nulla. Nam vitae felis et orci congue porta nec non ipsum. Donec pretium blandit accumsan. In aliquam lacinia nisi, ut venenatis mauris condimentum ut. Morbi rutrum orci et nisl accumsan euismod. Etiam viverra luctus sem pellentesque suscipit. Aliquam ultricies egestas risus at eleifend. Ut lacinia, tortor non varius malesuada, massa diam aliquet augue, vitae tempor metus tellus eget diam. Nulla vel augue eu elit adipiscing egestas. Duis et nulla est, ac congue arcu. Phasellus semper, ipsum et blandit rutrum, erat ante semper quam, at iaculis quam tellus sed neque.</p>\n"
-    . "<p>Pellentesque vulputate sollicitudin justo, at faucibus nisl convallis in. Nulla facilisi. Curabitur nec mauris eu justo ultricies ultricies gravida eu ipsum. Pellentesque at nunc velit, vitae congue nisl. Nam varius imperdiet leo eu accumsan. Nullam elementum fermentum diam euismod porttitor. Etiam sed pellentesque ante. Donec in est elementum mi tempor consectetur. Fusce orci lorem, mollis at tincidunt eget, fringilla sed nunc. Ut consectetur condimentum condimentum. Phasellus sed felis non massa gravida euismod ut in tellus. Curabitur suscipit pharetra sapien vitae dignissim. Morbi id arcu nec ante viverra lobortis vitae nec quam. Mauris id gravida odio. Nunc non sem nisi. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque hendrerit volutpat nisl id elementum. Vivamus lobortis iaculis nisi, sit amet tristique risus porttitor vel. Suspendisse potenti.</p>\n"
-    . "<p>Quisque aliquet sapien leo, vitae eleifend dolor. Fusce quis tincidunt nunc. Nam nec purus nulla, ac eleifend lorem. Curabitur eu quam et nibh egestas mattis. Maecenas eget felis augue. Integer scelerisque commodo urna, a pulvinar tortor euismod et. Praesent in nunc sapien. Ut iaculis auctor neque, sit amet rutrum est faucibus vitae. Sed a sagittis quam. Quisque interdum luctus fringilla. Vestibulum vitae nunc in felis luctus ultricies at id magna. Nam volutpat sapien ac lorem interdum pellentesque. Suspendisse faucibus, leo vitae laoreet interdum, mi mi pulvinar neque, sit amet tristique sapien nulla nec dolor. Etiam non ligula augue.</p>\n"
-    . "<p>Vivamus purus elit, ornare eget accumsan ut, luctus et orci. Sed vestibulum turpis ut quam vehicula id hendrerit velit suscipit. Pellentesque pulvinar, libero vitae sagittis scelerisque, felis ante faucibus risus, ut viverra velit mi at tortor. Aliquam lacinia condimentum felis, eu elementum ligula laoreet vitae. Sed placerat tempus turpis a fringilla. Etiam porta accumsan feugiat. Phasellus et cursus magna. Suspendisse vitae odio sit amet urna vulputate consectetur. Vestibulum massa magna, sagittis at dictum vitae, sagittis scelerisque erat. Donec viverra tincidunt lacus. Maecenas fermentum erat et mauris tincidunt sed eleifend quam tempus. In at augue mi, in tincidunt arcu. Duis dapibus aliquet mi, ac ullamcorper est semper quis. Sed nec nulla nec odio malesuada viverra id sed nulla. Donec lobortis euismod aliquam. Praesent sit amet dolor quis lacus auctor lobortis. In hac habitasse platea dictumst. Sed at nisi sed nisi ullamcorper pellentesque. Vivamus eget enim sem, non laoreet leo. Sed vel odio lacus.</p>\n"
-    . $end;
-	$book->addChapter("Chapter 2: Lorem ipsum", "Chapter002.html", $chapter2, true);
-	$log->logLine("add ch. 2");
+		
+		
+		$text = $start;	
+		$text .= '<h1 class="ch_title">'.$chapterTitle.'</h1>';
+		$text .= ( metadata($item, array('Dublin Core', 'Title'), array('index'=>1))!==('[Untitled]') ) ? '<h2 class="ch_subtitle">'.metadata($item, array('Dublin Core', 'Title'), array('index'=>1)).'</h2>' : null;
+		$text .= ($authors=metadata( $item, array( 'Dublin Core', 'Creator' ),array('all'=>true))) ? '<h3 class="ch_author">'.srss_authors($authors).'</h3>' : null;
+		$text .= '<div class="ch_content">'.srss_br2p($content).$continue_link.'</div>';
+		$text .= $end;
+		
+	    
+		$book->addChapter("Chapter $chapterIndex: $chapterTitle", "Chapter$chapterIndexPadded.html", $text, true);
+		unset($text);
+		$chapterIndex++;
+		// $log->logLine("add ch. 2");
+			
+	}
+}  
     
-    
-// Chapter 3
-$chapter3 = $start . "<h1>Chapter 3</h1>\n"
-    . "<h2>Whatever the Ipsum</h2>\n"
-    . "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec magna lorem, mattis sit amet porta vitae, consectetur ut eros. Nullam id mattis lacus. In eget neque magna, congue imperdiet nulla. Aenean erat lacus, imperdiet a adipiscing non, dignissim eget felis. Nulla facilisi. Vivamus sit amet lorem eget mauris dictum pharetra. In mauris nulla, placerat a accumsan ac, mollis sit amet ligula. Donec eget facilisis dui. Cras elit quam, imperdiet at malesuada vitae, luctus id orci. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Pellentesque eu libero in leo ultrices tristique. Etiam quis ornare massa. Donec in velit leo. Sed eu ante tortor.</p>\n"
-    . "<p>Nullam at tempus enim. Nunc et augue non lectus consequat rhoncus ac a odio. Morbi et tellus eget nisi volutpat tincidunt. Curabitur tristique neque tincidunt purus blandit bibendum. Maecenas eleifend sem quis magna semper id pulvinar nisi porttitor. In in lectus accumsan eros tristique pharetra sit amet ac nulla. Nam vitae felis et orci congue porta nec non ipsum. Donec pretium blandit accumsan. In aliquam lacinia nisi, ut venenatis mauris condimentum ut. Morbi rutrum orci et nisl accumsan euismod. Etiam viverra luctus sem pellentesque suscipit. Aliquam ultricies egestas risus at eleifend. Ut lacinia, tortor non varius malesuada, massa diam aliquet augue, vitae tempor metus tellus eget diam. Nulla vel augue eu elit adipiscing egestas. Duis et nulla est, ac congue arcu. Phasellus semper, ipsum et blandit rutrum, erat ante semper quam, at iaculis quam tellus sed neque.</p>\n"
-    . $end;
-	$book->addChapter("Chapter 3: Whatever the Ipsum", "Chapter003.html", $chapter3);    
-	$log->logLine("add ch. 3");
 
-$book->addChapter("Log", "Log.html", $start . $log->getLog() . "\n</pre>" . $end);
-if ($book->isLogging) { // Only used in case we need to debug EPub.php.
-    $epublog = $book->getLog();
-    $book->addChapter("ePubLog", "ePubLog.html", $start . $epublog . "\n</pre>" . $end);
-}
+// $book->addChapter("Log", "Log.html", $start . $log->getLog() . "\n</pre>" . $end);
+// if ($book->isLogging) { // Only used in case we need to debug EPub.php.
+//     $epublog = $book->getLog();
+//     $book->addChapter("ePubLog", "ePubLog.html", $start . $epublog . "\n</pre>" . $end);
+// }
     
 // Finalize the book, and build the archive.
 $book->finalize(); 
 
 // Send the book to the client. ".epub" will be appended if missing.
-$zipData = $book->sendBook("Erin_Example_Book $date");
+$zipData = $book->sendBook($filename);
 
 exit;
 ?>
