@@ -17,7 +17,15 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
     const DEFAULT_APP_STORE_LINKS = 0;
     const DEFAULT_ABOUT_TEXT = null;
     const DEFAULT_IMAGE_URL = null;
-    
+    const DEFAULT_BOOK_COVER_IMAGE = null;
+    const DEFAULT_BOOK_SUBJECTS = null;
+    const DEFAULT_BOOK_RIGHTS = null;
+    const DEFAULT_BOOK_PUBLISHER = null;
+    const DEFAULT_BOOK_PUBLISHER_URL = null;
+    const DEFAULT_BOOK_DESCRIPTION = null;
+    const DEFAULT_BOOK_AUTH = null;
+    const DEFAULT_BOOK_AUTH_SORT = null;
+    const DEFAULT_BOOK_TITLE = null;
 
     protected $_hooks = array(
     	'install', 
@@ -44,6 +52,16 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
         'srss_include_applink_footer' => self::DEFAULT_APP_STORE_LINKS,
         'srss_about_text' => self::DEFAULT_ABOUT_TEXT,
         'srss_image_url' => self::DEFAULT_IMAGE_URL,
+        'srss_book_cover_image_url' => self::DEFAULT_BOOK_COVER_IMAGE,
+        'srss_book_subjects' => self::DEFAULT_BOOK_SUBJECTS,
+        'srss_book_rights' => self::DEFAULT_BOOK_RIGHTS,
+        'srss_book_publisher' => self::DEFAULT_BOOK_PUBLISHER,
+        'srss_book_publisher_url' => self::DEFAULT_BOOK_PUBLISHER_URL,
+        'srss_book_description' => self::DEFAULT_BOOK_DESCRIPTION,
+        'srss_book_author' => self::DEFAULT_BOOK_AUTH,
+        'srss_book_author_sort' => self::DEFAULT_BOOK_AUTH_SORT,
+        'srss_book_title' => self::DEFAULT_BOOK_TITLE,
+        
     );
 
 
@@ -99,7 +117,17 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
         set_option('srss_include_social_footer', (int)(boolean)$_POST['srss_include_social_footer']);
         set_option('srss_include_applink_footer', (int)(boolean)$_POST['srss_include_applink_footer']);
         set_option('srss_include_read_more_link', (int)(boolean)$_POST['srss_include_read_more_link']);
-        set_option('srss_include_mediastats_footer', (int)(boolean)$_POST['srss_include_mediastats_footer']);
+        set_option('srss_include_mediastats_footer', (int)(boolean)$_POST['srss_include_mediastats_footer']);     
+        set_option('srss_book_title', $_POST['srss_book_title']);
+        set_option('srss_book_author', $_POST['srss_book_author']);
+        set_option('srss_book_author_sort', $_POST['srss_book_author_sort']);
+        set_option('srss_book_description', $_POST['srss_book_description']);
+        set_option('srss_book_publisher', $_POST['srss_book_publisher']);
+        set_option('srss_book_publisher_url', $_POST['srss_book_publisher_url']);
+        set_option('srss_book_rights', $_POST['srss_book_rights']);
+        set_option('srss_book_subjects', $_POST['srss_book_subjects']);
+        set_option('srss_book_cover_image_url', $_POST['srss_book_cover_image_url']);
+        
     }	
     
     
