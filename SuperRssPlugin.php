@@ -1,7 +1,7 @@
 <?php
 
 require_once dirname(__FILE__) . '/helpers/SuperRssFunctions.php';
-
+require_once dirname(__FILE__) . '/models/Table/srss_options.php';
 
 class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
 {
@@ -23,7 +23,9 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
     	'install', 
     	'uninstall',
         'config_form', 
-        'config');
+        'config',
+        'admin_items_panel_fields',
+        'after_save_item');
 
 	protected $_filters = array(
 		'response_contexts',
@@ -74,13 +76,17 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
 
 		return $contexts;
 	}
-	
+
+        
+    /*
+    ** Plugin options
+    */
+    
     public function hookConfigForm()
     {
         require dirname(__FILE__) . '/config_form.php';
     }	
-    
-    
+        
     public function hookConfig()
     {
         set_option('srss_facebook_link', $_POST['srss_facebook_link']);
@@ -95,13 +101,62 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
         set_option('srss_include_read_more_link', (int)(boolean)$_POST['srss_include_read_more_link']);
         set_option('srss_include_mediastats_footer', (int)(boolean)$_POST['srss_include_mediastats_footer']);
     }	
+    
+    
+    /*
+    ** Item options
+    */
+
+    public function hookAfterSaveItem($args)
+    {
+        $post = $_POST;
+        $item = $args['record'];  
+         
+        if (!$post['fieldtrip_feed']) {
+            return;
+        }  
+        
+        $srss_option = $this->_db->getTable('srss_options')->findSrss_optionsByItem($item);
+        $srss_option = new srss_option;
+        $srss_option->item_id = $item->id;
+       
+        $srss_option->save();
+    }
+        
+    public function hookAdminItemsPanelFields()
+    {	
+		?>	
+	    <div id="srss-form" class="field">
+	        <label for="fieldtrip_feed"><?php echo  __('SuperRSS Options');?></label>
+	        <div class="inputs">
+	        <?php if ( is_allowed('Items', 'makePublic') ): ?>
+	            <div class="fieldtrip_feed">
+	                <?php echo __('Include in Fieldtrip feed'); ?>: 
+	                <?php 
+	                echo get_view()->formCheckbox('fieldtrip_feed', 'fieldtrip_feed', array(), array('1', '0')); 
+	                ?>
+	            </div>
+	        <?php endif; ?>
+	        </div>
+	    </div> 		
+		<?php
+    }    
 
     /**
      * Install the plugin.
      */
     public function hookInstall()
-    {
-		$this->_installOptions();
+    {		
+		$this->_installOptions();    
+    
+        $db = get_db();
+        $sql = "
+        CREATE TABLE IF NOT EXISTS `$db->srss_options` (
+        `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+        `item_id` BIGINT UNSIGNED NOT NULL ,
+        `fieldtrip_feed` tinyint( 1 ) default '1',
+        INDEX (`item_id`)) ENGINE = MYISAM";
+        $db->query($sql);        
     }
 
     /**
@@ -110,5 +165,9 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
     public function hookUninstall()
     {        
 		$this->_uninstallOptions();
+
+        $db = get_db();
+        $db->query("DROP TABLE IF EXISTS `$db->srss_options`");  		
+		
     }	
 }
