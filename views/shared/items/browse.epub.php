@@ -127,7 +127,184 @@ if(is_array($book_subjects)){
 
 
 // CSS
-$cssData = ".ch_title{page-break-before:always}";
+$cssData = "
+/* Basic */
+
+body {
+  font-family: serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: left;
+}
+
+h1{
+  text-align: left;
+  text-transform: uppercase;
+  font-size: 1.25em;
+}
+
+
+h2{
+  font-style:italic;
+  text-align: left;
+  font-size: 1.1em;
+  letter-spacing: 1px;  
+}
+
+
+h3{
+  font-size: 1.0em;
+  font-weight: 700;
+  text-align: left;
+  margin-bottom: .8em;
+}
+
+h4 {
+  font-size: 1em;
+  font-weight: bold;
+  color: #666;
+  text-align: left;
+  padding-top: 1em;
+  margin-bottom: .8em;
+}
+
+
+blockquote {
+  font-family: Arial, Helvetica, sans-serif;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.2em;
+  margin: 0 0 0.45em 0.9em;
+  text-align: left;
+  text-indent: 0;
+}
+
+sup {
+  vertical-align: super;
+  font-size: 70%;
+  line-height: 100% !important;
+}
+
+a {
+  font-family: Arial, Helvetica, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+}
+
+
+img {
+  max-width: 100%;
+  max-height: 15em;
+}
+
+/* Specific */
+
+.book_generated,.book_title,.book_author{
+	text-align:left;
+}
+
+h3.ch_author{
+	font-family:serif;
+	font-size:0.75em;
+}
+
+h2.ch_subtitle{
+	font-size:0.9em;
+}
+
+h1.ch_title, h2.ch_subtitle, h3.ch_author{
+	text-align:right;
+}
+
+h2.ch_subtitle, h3.ch_author{
+	text-transform: uppercase;
+	font-weight:lighter;
+	margin:0 0.5em 1em;
+}
+
+div.ch_img{
+	text-align:right;
+	display:block;
+	clear:both;
+	margin-bottom:1em;
+}
+
+div.ch_continue{
+	font-size:0.85em;
+	font-style:italic;
+}
+
+/*Kindle Legacy Specific Styles*/
+@media amzn-mobi {
+
+
+  h1 {
+    font-size: 200%;
+  }
+
+  h2 {
+    font-family: serif;
+    text-transform: none;
+    font-size: 150%;
+    font-weight: normal;
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+
+  h3 {
+    font-family: serif;
+    font-size: 125%;
+    font-weight: normal;
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+
+  h4 {
+    font-family: serif;
+    font-size: 120%;
+    font-weight: normal;
+    font-style: italic;
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+
+  h2 {
+    font-family: serif;
+    text-transform: none;
+    font-size: 150%;
+    font-weight: normal;
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+
+  h3 {
+    font-family: serif;
+    font-size: 125%;
+    font-weight: normal;
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+
+  h4 {
+    font-family: serif;
+    font-size: 120%;
+    font-weight: normal;
+    font-style: italic;
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+
+  .sub-entry {
+    text-indent: 20%;
+  }
+
+  p.body-first-paragraph {
+    text-indent: 0;
+  }
+}
+";
 
 $book->addCSSFile("styles.css", "css1", $cssData);
 // $log->logLine("add css");
