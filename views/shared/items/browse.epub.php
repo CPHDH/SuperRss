@@ -345,9 +345,12 @@ foreach( loop( 'items' ) as $item ){
 		$srss_media_info=srss_media_info($item);
 		$url = WEB_ROOT.'/items/show/'.$item->id;
 		$continue_link= (get_option('srss_include_read_more_link')==1) ? '<p><em><strong>'.__('<a href="%2$s">For more%1$s, view the original article</a>.',$srss_media_info['stats_link'], $url).'</strong></em></p>' : null;
+		
+		$hasImg=$srss_media_info['hero_img']['src'];
+		$externalReferences = $hasImg ? EPub::EXTERNAL_REF_ADD : EPub::EXTERNAL_REF_IGNORE ;
 	
 		$content='';
-		$content=$srss_media_info['hero_img']['src'] ? '<img src="'.$srss_media_info['hero_img']['src'].'" alt="'.$srss_media_info['hero_img']['title'].'" /><br/>' : null;
+		$content=$hasImg ? '<div class="ch_img"><img src="'.$srss_media_info['hero_img']['src'].'" alt="'.$srss_media_info['hero_img']['title'].'" /></div>' : null;
 		$content .= metadata( $item, array( 'Dublin Core', 'Description' ));
 
 		
@@ -360,8 +363,10 @@ foreach( loop( 'items' ) as $item ){
 		$text .= $end;
 		
 	    
-		$book->addChapter("Chapter $chapterIndex: $chapterTitle", "Chapter$chapterIndexPadded.html", $text, true);
+		$book->addChapter("Chapter $chapterIndex: $chapterTitle", "Chapter$chapterIndexPadded.html", $text, true, $externalReferences);
+		
 		unset($text);
+		
 		$chapterIndex++;
 		// $log->logLine("add ch. 2");
 			
