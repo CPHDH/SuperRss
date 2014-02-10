@@ -25,7 +25,12 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
     const DEFAULT_BOOK_DESCRIPTION = null;
     const DEFAULT_BOOK_AUTH = null;
     const DEFAULT_BOOK_AUTH_SORT = null;
-    const DEFAULT_BOOK_TITLE = null;
+    const DEFAULT_BOOK_TITLE = null;   
+    const DEFAULT_BOOK_INTRO = null;
+    const DEFAULT_BOOK_CONCLUSION = null;
+    const DEFAULT_BOOK_RESOURCES = null;
+    const DEFAULT_BOOK_ABOUT_CONTRIBUTORS = null;
+    const DEFAULT_BOOK_INCLUDE_CONTRIBUTORS = 1;
 
     protected $_hooks = array(
     	'install', 
@@ -61,7 +66,11 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
         'srss_book_author' => self::DEFAULT_BOOK_AUTH,
         'srss_book_author_sort' => self::DEFAULT_BOOK_AUTH_SORT,
         'srss_book_title' => self::DEFAULT_BOOK_TITLE,
-        
+        'srss_book_about_contributors' => self::DEFAULT_BOOK_ABOUT_CONTRIBUTORS,
+        'srss_book_resources' => self::DEFAULT_BOOK_RESOURCES,
+        'srss_book_conclusion' => self::DEFAULT_BOOK_CONCLUSION,
+        'srss_book_intro' => self::DEFAULT_BOOK_INTRO,
+        'srss_book_include_contributors' => self::DEFAULT_BOOK_INCLUDE_CONTRIBUTORS
     );
 
 
@@ -126,7 +135,12 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
         set_option('srss_book_publisher_url', $_POST['srss_book_publisher_url']);
         set_option('srss_book_rights', $_POST['srss_book_rights']);
         set_option('srss_book_subjects', $_POST['srss_book_subjects']);
-        set_option('srss_book_cover_image_url', $_POST['srss_book_cover_image_url']);
+        set_option('srss_book_cover_image_url', $_POST['srss_book_cover_image_url']);      
+        set_option('srss_book_intro', $_POST['srss_book_intro']);
+        set_option('srss_book_conclusion', $_POST['srss_book_conclusion']);
+        set_option('srss_book_resources', $_POST['srss_book_resources']);
+        set_option('srss_book_about_contributors', $_POST['srss_book_about_contributors']);
+        set_option('srss_book_include_contributors', (int)(boolean)$_POST['srss_book_include_contributors']);
         
     }	
     

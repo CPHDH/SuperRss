@@ -326,9 +326,83 @@
                     <small><?php echo __('Example: http://example.com/images/cover.jpg');?></small>
                 </div>
             </div>
-        </div>        
+        </div>      
+          
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_book_intro"><?php echo __('Book Introduction'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("Enter text to include an \"Introduction\" chapter at the beginning of the book."); ?></p>
+
+                <div class="input-block">
+                    <textarea cols="50" rows="4" class="textinput" name="srss_book_intro"><?php echo get_option('srss_book_intro'); ?></textarea>
+                </div>
+            </div>
+        </div>    
+
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_book_conclusion"><?php echo __('Book Conclusion'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("Enter text to include a \"Conclusion\" chapter at the beginning of the book."); ?></p>
+
+                <div class="input-block">
+                    <textarea cols="50" rows="4" class="textinput" name="srss_book_conclusion"><?php echo get_option('srss_book_conclusion'); ?></textarea>
+                </div>
+            </div>
+        </div>  
+
+
+
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_book_resources"><?php echo __('Book Resources'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("Enter text to include a \"Resources\" chapter at the end of the book."); ?></p>
+
+                <div class="input-block">
+                    <textarea cols="50" rows="4" class="textinput" name="srss_book_resources"><?php echo get_option('srss_book_resources'); ?></textarea>
+                </div>
+            </div>
+        </div>    
         
-                       
+
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_book_about_contributors"><?php echo __('Book Contributors'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("Enter text to include an \"About the Contributors\" chapter for your book."); ?></p>
+
+                <div class="input-block">
+                    <textarea cols="50" rows="4" class="textinput" name="srss_book_about_contributors"><?php echo get_option('srss_book_about_contributors'); ?></textarea>
+                </div>
+            </div>
+        </div>      
+
+
+		<div class="field">
+	        <div class="two columns alpha">
+	            <label for="srss_book_include_contributors"><?php echo __('Include list of Contributors?'); ?></label>
+	        </div>
+	
+	        <div class="inputs five columns omega">
+	            <?php echo get_view()->formCheckbox('srss_book_include_contributors', true, 
+	                    array('checked'=>(boolean)get_option('srss_book_include_contributors'))); ?>
+	
+	            <p class="explanation"><?php echo __(
+	                      'If checked, an alphabetical list of all item-authors will be automatically appended to the "About the Contributors" chapter.'
+	                    ); ?></p>
+	        </div>
+		</div>
+                               
         <h2>Usage Information</h2>
         <p>The SuperRSS plugin adds 3 new output contexts to your site's browse views:</p>
         <ul>
