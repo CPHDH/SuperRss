@@ -321,7 +321,7 @@ $book->setCoverImage("Cover.jpg", file_get_contents($book_cover_img), "image/jpe
 // $log->logLine("set cover image");
 
 // Title page
-$titlePage = $start . "<h1>$book_title</h1>\n<h2>By $book_author</h2>\n<small>Generated at ".$parsed_url['host']." on $date.</small>" . $end;
+$titlePage = $start . "<h1 class=\"book_title\">$book_title</h1>\n<h2 class=\"book_author\">$book_author</h2>\n<span class=\"book_generated\"><small>Generated at ".$parsed_url['host']." on $date.</small></span>" . $end;
 $book->addChapter("Title Page", "TitlePage.html", $titlePage);
 // $log->logLine("add title page");
 
