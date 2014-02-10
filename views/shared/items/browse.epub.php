@@ -63,6 +63,10 @@ $conclusionText = get_option('srss_book_conclusion') ? get_option('srss_book_con
 
 $resourcesText = get_option('srss_book_resources') ? get_option('srss_book_resources') : false;
 
+$contributorsText = get_option('srss_book_about_contributors') ? get_option('srss_book_about_contributors') : false;
+
+$includeContributorsList=get_option('srss_book_include_contributors');
+
 // set up logging
 // date_default_timezone_set('America/New_York');
 // require_once "$plugin_root/models/EPub/Logger.php";
@@ -369,8 +373,8 @@ foreach( loop( 'items' ) as $item ){
 		unset($text);
 		
 		$chapterIndex++;
-		// $log->logLine("add ch. 2");
-			
+		
+		// $log->logLine("add Chapter $chapterIndex");
 	}
 }  
 
