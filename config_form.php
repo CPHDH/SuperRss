@@ -211,6 +211,7 @@
         <div class="field">
             <div class="two columns alpha">
                 <label for="srss_book_description"><?php echo __('Book Description'); ?></label>
+                
             </div>
 
             <div class="inputs five columns omega">
@@ -218,6 +219,7 @@
 
                 <div class="input-block">
                     <textarea cols="50" rows="4" class="textinput" name="srss_book_description"><?php echo get_option('srss_book_description'); ?></textarea>
+                    <small><?php echo __('NOTE: This text is embedded as metadata in the exported file and used in various library applications.');?></small>
                 </div>
             </div>
         </div>
@@ -323,7 +325,7 @@
 
                 <div class="input-block">
                     <input type="text" class="textinput" name="srss_book_cover_image_url" value="<?php echo get_option('srss_book_cover_image_url'); ?>">
-                    <small><?php echo __('Example: http://example.com/images/cover.jpg');?></small>
+                    <small><?php echo __('Example: http://example.com/images/cover.jpg<br>File requirements: JPEG format (768px x 1024px)');?></small>
                 </div>
             </div>
         </div>      
