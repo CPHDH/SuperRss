@@ -338,8 +338,9 @@ if($introText){
 	$book->addChapter("Introduction","Introduction.html",$start.'<h1 class="ch_title">Introduction</h1>'.$introText.$end,true,EPub::EXTERNAL_REF_IGNORE);
 }
 
-// Build the chapters
+// Build the chapters and author list
 $chapterIndex=1;
+$authArray=array();
 foreach( loop( 'items' ) as $item ){
 
 	if( ($item->public) == 1 ){
@@ -357,14 +358,20 @@ foreach( loop( 'items' ) as $item ){
 		$content='';
 		$content=$hasImg ? '<div class="ch_img"><img src="'.$srss_media_info['hero_img']['src'].'" alt="'.$srss_media_info['hero_img']['title'].'" /></div>' : null;
 		$content .= metadata( $item, array( 'Dublin Core', 'Description' ));
-
-		
+		$authors=metadata( $item, array( 'Dublin Core', 'Creator' ),array('all'=>true));
 		
 		$text = $start;	
 		$text .= '<h1 class="ch_title">'.$chapterTitle.'</h1>';
 		$text .= ( metadata($item, array('Dublin Core', 'Title'), array('index'=>1))!==('[Untitled]') ) ? '<h2 class="ch_subtitle">'.metadata($item, array('Dublin Core', 'Title'), array('index'=>1)).'</h2>' : null;
-		$text .= ($authors=metadata( $item, array( 'Dublin Core', 'Creator' ),array('all'=>true))) ? '<h3 class="ch_author">'.srss_authors($authors).'</h3>' : null;
-		$text .= '<div class="ch_content">'.srss_br2p($content).$continue_link.'</div>';
+		
+		if($authors){
+			$text .= '<h3 class="ch_author">'.srss_authors($authors).'</h3>';
+			foreach($authors as $author){
+				$authArray[]=$author;
+			}
+		}
+		
+		$text .= '<div class="ch_content">'.srss_br2p($content).'<div class="ch_continue">'.$continue_link.'</div></div>';
 		$text .= $end;
 		
 	    
