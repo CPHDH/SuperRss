@@ -61,6 +61,8 @@ $introText = get_option('srss_book_intro') ? get_option('srss_book_intro') : fal
 
 $conclusionText = get_option('srss_book_conclusion') ? get_option('srss_book_conclusion') : false;
 
+$resourcesText = get_option('srss_book_resources') ? get_option('srss_book_resources') : false;
+
 // set up logging
 // date_default_timezone_set('America/New_York');
 // require_once "$plugin_root/models/EPub/Logger.php";
@@ -370,6 +372,12 @@ foreach( loop( 'items' ) as $item ){
 if($conclusionText){
 	$book->addChapter("Conclusion","Conclusion.html",$start.'<h1 class="ch_title">Conclusion</h1>'.$conclusionText.$end,true,EPub::EXTERNAL_REF_IGNORE);
 	// $log->logLine("add Conclusion");
+}
+
+// Resources
+if($resourcesText){
+	$book->addChapter("Resources","Resources.html",$start.'<h1 class="ch_title">Resources</h1>'.$resourcesText.$end,true,EPub::EXTERNAL_REF_IGNORE);
+	// $log->logLine("add Resources");
 }
 
 // $book->addChapter("Log", "Log.html", $start . $log->getLog() . "\n</pre>" . $end);
