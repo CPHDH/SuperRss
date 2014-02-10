@@ -397,6 +397,21 @@ if($resourcesText){
 	// $log->logLine("add Resources");
 }
 
+// Contributors
+if($contributorsText){
+	if($includeContributorsList){
+		$list='';
+		sort($authArray);
+		$authArray=array_unique($authArray);
+		foreach($authArray as $authItem){
+			$list.='<li>'.$authItem.'</li>';
+		}
+		$contributorsText.='<br/><h2 class="contrib_list">Contributors</h2><ul>'.$list.'</ul>';
+	}
+	$book->addChapter("About the Contributors","Contributors.html",$start.'<h1 class="ch_title">About the Contributors</h1>'.$contributorsText.$end,true,EPub::EXTERNAL_REF_IGNORE);
+	// $log->logLine("add Contributors");
+}    
+
 // $book->addChapter("Log", "Log.html", $start . $log->getLog() . "\n</pre>" . $end);
 // if ($book->isLogging) { // Only used in case we need to debug EPub.php.
 //     $epublog = $book->getLog();
