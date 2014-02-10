@@ -57,6 +57,8 @@ $book_subjects = get_option('srss_book_subjects') ? explode( '|', get_option('sr
 $book_cover_img = ( ( get_option('srss_book_cover_image_url') ) && ( exif_imagetype( get_option('srss_book_cover_image_url') ) == IMAGETYPE_JPEG ) ) ? get_option('srss_book_cover_image_url') : "$plugin_root/views/shared/items/assets/cover-image_blank.jpg";
 
 
+$introText = get_option('srss_book_intro') ? get_option('srss_book_intro') : false;
+
 $conclusionText = get_option('srss_book_conclusion') ? get_option('srss_book_conclusion') : false;
 
 // set up logging
@@ -324,6 +326,10 @@ $book->addChapter("Title Page", "TitlePage.html", $titlePage);
 // TOC
 $book->buildTOC(NULL, "toc", "Table of Contents", TRUE, TRUE);
 // $log->logLine("add TOC");
+// Intro
+if($introText){
+	$book->addChapter("Introduction","Introduction.html",$start.'<h1 class="ch_title">Introduction</h1>'.$introText.$end,true,EPub::EXTERNAL_REF_IGNORE);
+}
 
 // Build the chapters
 $chapterIndex=1;
