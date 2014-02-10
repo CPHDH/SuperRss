@@ -56,6 +56,9 @@ $book_subjects = get_option('srss_book_subjects') ? explode( '|', get_option('sr
 
 $book_cover_img = ( ( get_option('srss_book_cover_image_url') ) && ( exif_imagetype( get_option('srss_book_cover_image_url') ) == IMAGETYPE_JPEG ) ) ? get_option('srss_book_cover_image_url') : "$plugin_root/views/shared/items/assets/cover-image_blank.jpg";
 
+
+$conclusionText = get_option('srss_book_conclusion') ? get_option('srss_book_conclusion') : false;
+
 // set up logging
 // date_default_timezone_set('America/New_York');
 // require_once "$plugin_root/models/EPub/Logger.php";
@@ -356,7 +359,12 @@ foreach( loop( 'items' ) as $item ){
 			
 	}
 }  
-    
+
+// Conclusion
+if($conclusionText){
+	$book->addChapter("Conclusion","Conclusion.html",$start.'<h1 class="ch_title">Conclusion</h1>'.$conclusionText.$end,true,EPub::EXTERNAL_REF_IGNORE);
+	// $log->logLine("add Conclusion");
+}
 
 // $book->addChapter("Log", "Log.html", $start . $log->getLog() . "\n</pre>" . $end);
 // if ($book->isLogging) { // Only used in case we need to debug EPub.php.
