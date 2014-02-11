@@ -50,7 +50,7 @@ $book_publisher = get_option('srss_book_publisher') ? get_option('srss_book_publ
 
 $book_publisher_url = get_option('srss_book_publisher_url') ? get_option('srss_book_publisher_url') : $site_url;
 
-$book_rights = get_option('srss_book_rights') ? get_option('srss_book_rights') : date('Y').' '.$site_owner;
+$book_rights = get_option('srss_book_rights') ? get_option('srss_book_rights') : 'Copyright '.date('Y').' '.$site_owner;
 
 $book_subjects = get_option('srss_book_subjects') ? explode( '|', get_option('srss_book_subjects') ) : null;
 
@@ -350,38 +350,58 @@ foreach( loop( 'items' ) as $item ){
 	if( ($item->public) == 1 ){
 		
 		$chapterIndexPadded=str_pad($chapterIndex, 5, "0", STR_PAD_LEFT);
-		$chapterTitle=metadata($item,array('Dublin Core','Title'), array('index'=>0));
-		
+		$url = WEB_ROOT.'/items/show/'.$item->id;	
 		$srss_media_info=srss_media_info($item);
-		$url = WEB_ROOT.'/items/show/'.$item->id;
-		$continue_link= (get_option('srss_include_read_more_link')==1) ? '<p><em><strong>'.__('<a href="%2$s">For more%1$s, view the original article</a>.',$srss_media_info['stats_link'], $url).'</strong></em></p>' : null;
-		
 		$hasImg=$srss_media_info['hero_img']['src'];
-		$externalReferences = $hasImg ? EPub::EXTERNAL_REF_ADD : EPub::EXTERNAL_REF_IGNORE ;
+		if($hasImg){
+			$chapterImage='<div class="ch_img"><img src="'.$srss_media_info['hero_img']['src'].'" alt="'.$srss_media_info['hero_img']['title'].'" /></div>';
+			$externalReferences = EPub::EXTERNAL_REF_ADD;
+		}else{
+			$chapterImage=null;
+			$externalReferences = EPub::EXTERNAL_REF_IGNORE;
+		}		
 	
-		$content='';
-		$content=$hasImg ? '<div class="ch_img"><img src="'.$srss_media_info['hero_img']['src'].'" alt="'.$srss_media_info['hero_img']['title'].'" /></div>' : null;
-		$content .= metadata( $item, array( 'Dublin Core', 'Description' ));
-		$authors=metadata( $item, array( 'Dublin Core', 'Creator' ),array('all'=>true));
-		
-		$text = $start;	
-		$text .= '<h1 class="ch_title">'.$chapterTitle.'</h1>';
-		$text .= ( metadata($item, array('Dublin Core', 'Title'), array('index'=>1))!==('[Untitled]') ) ? '<h2 class="ch_subtitle">'.metadata($item, array('Dublin Core', 'Title'), array('index'=>1)).'</h2>' : null;
-		
-		if($authors){
-			$text .= '<h3 class="ch_author">'.srss_authors($authors).'</h3>';
-			foreach($authors as $author){
-				$authArray[]=$author;
+		$chapterFile = $start;	
+			
+			$continueOption=get_option('srss_include_read_more_link');
+			if($continueOption==1){
+				$chapterLink = '<div class="ch_continue"><p><em><strong>'.__('<a href="%2$s">For more%1$s, view the original article</a>.',$srss_media_info['stats_link'], $url).'</strong></em></p></div>';
+			}else{
+				$chapterLink=null;
 			}
-		}
+	
+			$chapterTitle=metadata($item,array('Dublin Core','Title'), array('index'=>0));
+			if($chapterTitle){
+				$chapterFile .= '<h1 class="ch_title">'.$chapterTitle.'</h1>';
+			}
+			
+			$chapterSubTitle=metadata($item, array('Dublin Core', 'Title'), array('index'=>1));
+			if( $chapterSubTitle!=='[Untitled]' ){
+				$chapterFile.= '<h2 class="ch_subtitle">'.$chapterSubTitle.'</h2>';
+			}
+			
+			$chapterAuthors=metadata( $item, array( 'Dublin Core', 'Creator' ),array('all'=>true));
+			if($chapterAuthors){
+				$chapterFile .= '<h3 class="ch_author">'.srss_authors($chapterAuthors).'</h3>';
+				foreach($chapterAuthors as $author){
+					$authArray[]=$author;
+				}
+			}
+			
+			$chapterText=metadata( $item, array( 'Dublin Core', 'Description' ));
+			if($chapterText){
+				$chapterFile .= '<div class="ch_content">'
+				.$chapterImage.srss_br2p($chapterText)
+				.$chapterLink
+				.'</div>';
+			}
 		
-		$text .= '<div class="ch_content">'.srss_br2p($content).'<div class="ch_continue">'.$continue_link.'</div></div>';
-		$text .= $end;
+		$chapterFile .= $end;
 		
 	    
-		$book->addChapter("Chapter $chapterIndex: $chapterTitle", "Chapter$chapterIndexPadded.html", $text, true, $externalReferences);
+		$book->addChapter("Chapter $chapterIndex: $chapterTitle", "Chapter$chapterIndexPadded.html", $chapterFile, true, $externalReferences);
 		
-		unset($text);
+		unset($chapterFile);
 		
 		$chapterIndex++;
 		
