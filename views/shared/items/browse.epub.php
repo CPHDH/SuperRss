@@ -352,7 +352,7 @@ foreach( loop( 'items' ) as $item ){
 		$chapterIndexPadded=str_pad($chapterIndex, 5, "0", STR_PAD_LEFT);
 		$url = WEB_ROOT.'/items/show/'.$item->id;	
 		$srss_media_info=srss_media_info($item);
-		$hasImg=$srss_media_info['hero_img']['src'];
+		$hasImg=isset($srss_media_info['hero_img']['src']) ? $srss_media_info['hero_img']['src'] : false;
 		if($hasImg){
 			$chapterImage='<div class="ch_img"><img src="'.$srss_media_info['hero_img']['src'].'" alt="'.$srss_media_info['hero_img']['title'].'" /></div>';
 			$externalReferences = EPub::EXTERNAL_REF_ADD;
@@ -364,7 +364,7 @@ foreach( loop( 'items' ) as $item ){
 		$chapterFile = $start;	
 			
 			$continueOption=get_option('srss_include_read_more_link');
-			if($continueOption==1){
+			if( ($continueOption==1) && (isset($srss_media_info['stats_link'])) ){
 				$chapterLink = '<div class="ch_continue"><p><em><strong>'.__('<a href="%2$s">For more%1$s, view the original article</a>.',$srss_media_info['stats_link'], $url).'</strong></em></p></div>';
 			}else{
 				$chapterLink=null;
