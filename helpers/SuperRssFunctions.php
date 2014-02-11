@@ -148,7 +148,11 @@ function srss_media_info($item){
 				'title'=>$title,
 				'link'=>'<img alt="'.$title.'" src="'.$fullsize.'"/>'
 			);
-			$fstr[]=$num.' '.($num > 1 ? __('images') : __('image') );
+			if($num > 1){
+				// greater than one since we already include the first one
+				$fstr[]=$num.' '.($num > 1 ? __('images') : __('image') );
+			}
+			
 		}
 	
 		if( count($audio) >0 ){
