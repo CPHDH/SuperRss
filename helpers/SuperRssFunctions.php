@@ -20,6 +20,7 @@ function srss_br2p($data) {
 function srss_GeoRSSPoint($item=null){
 	if(
 		($item !==null)
+		&& (plugin_is_active('Geolocation'))
 		&& ($location = get_db()->getTable( 'Location' )->findLocationByItem( $item, true ))
 	){
 

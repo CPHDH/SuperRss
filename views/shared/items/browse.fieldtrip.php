@@ -28,10 +28,22 @@ if(option('administrator_email')!=null){
 
 // get feed item data
 foreach( loop( 'items' ) as $omeka_item ) {
-	// add item element for each article
-	$feed_item = $xml->channel->addChild('item');
 
-	// Get the entry data
+	// If the item has a location, create the feed item element
+	if($point=srss_GeoRSSPoint($omeka_item)){
+		
+		// add item element for the article
+		$feed_item = $xml->channel->addChild('item');
+		
+		// add the location point to the item element
+		$feed_item->addChild('point', $point, 'http://www.georss.org/georss');
+		
+	}else{
+		// if this item doesn't have a location, stop and try the next one
+		continue;
+	}
+
+	// Get the rest of the entry data
 	$title=  metadata( $omeka_item, array( 'Dublin Core', 'Title' ) ) ?
 		metadata( $omeka_item, array( 'Dublin Core', 'Title' ) ) :
 		'No title';
@@ -56,9 +68,7 @@ foreach( loop( 'items' ) as $omeka_item ) {
 	$feed_item->description->addCData($content);
 	$feed_item->addChild('link', $url);
 	$feed_item->addChild('pubDate', gmdate(DATE_RSS, strtotime($omeka_item->added )) );
-	if($point=srss_GeoRSSPoint($omeka_item)){
-		$feed_item->addChild('point', $point, 'http://www.georss.org/georss');
-	}
+
 	if($img_src=$srss_media_info['hero_img']['src']){
 
 		$feed_item_image = $feed_item->addChild('image', '', 'http://www.fieldtripper.com/fieldtrip_rss');
