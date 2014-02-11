@@ -141,10 +141,12 @@ function srss_media_info($item){
 		$hero=null;
 		if( count($images) >0 ){
 			$num=count($images);
+			$fullsize=isset($images[0]['fullsize']) ? $images[0]['fullsize'] : null;
+			$title=isset($images[0]['title']) ? $images[0]['title'] : null;
 			$hero=array(
-				'src'=>$images[0]['fullsize'],
-				'title'=>$images[0]['title'],
-				'link'=>'<img alt="'.$images[0]['title'].'" src="'.$images[0]['fullsize'].'"/>'
+				'src'=>$fullsize,
+				'title'=>$title,
+				'link'=>'<img alt="'.$title.'" src="'.$fullsize.'"/>'
 			);
 			$fstr[]=$num.' '.($num > 1 ? __('images') : __('image') );
 		}
