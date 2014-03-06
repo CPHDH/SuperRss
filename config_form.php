@@ -189,6 +189,21 @@
                 </div>
             </div>
         </div>
+
+        <div class="field">
+            <div class="two columns alpha">
+                <label for="srss_omit_from_fieldtrip"><?php echo __('Omit items from Field Trip?'); ?></label>
+            </div>
+
+            <div class="inputs five columns omega">
+                <p class="explanation"><?php echo __("Enter a comma-separated list of numeric IDs for items you wish to omit from the Field Trip feed."); ?></p>
+
+                <div class="input-block">
+                    <input type="text" class="textinput" name="srss_omit_from_fieldtrip" value="<?php echo get_option('srss_omit_from_fieldtrip'); ?>">
+                    <small><?php echo __('Example: 1,2,34,10,5,127<br>NOTE: Item IDs appear at the end of the permalink for each item. For example, 10 would be the item ID for a URL that ends in "/items/show/10"'); ?></small>
+                </div>
+            </div>
+        </div>      
         
                                        
         <h2>Usage Information</h2>

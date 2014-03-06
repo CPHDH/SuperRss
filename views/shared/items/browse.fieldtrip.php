@@ -25,12 +25,13 @@ $xml->channel->addChild('pubDate', date(DateTime::RSS));
 if(option('administrator_email')!=null){
 	$xml->channel->addChild('managingEditor',option('administrator_email').' ('.option('site_title').')');
 }
+$blacklist=get_option( 'srss_omit_from_fieldtrip' );
 
 // get feed item data
 foreach( loop( 'items' ) as $omeka_item ) {
 
 	// If the item has a location, create the feed item element
-	if($point=srss_GeoRSSPoint($omeka_item)){
+	if($point=srss_GeoRSSPoint($omeka_item) && !srss_is_omitted_item($omeka_item->id, $blacklist)){
 		
 		// add item element for the article
 		$feed_item = $xml->channel->addChild('item');

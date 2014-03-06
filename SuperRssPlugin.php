@@ -17,7 +17,7 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
     const DEFAULT_APP_STORE_LINKS = 0;
     const DEFAULT_ABOUT_TEXT = null;
     const DEFAULT_IMAGE_URL = null;
-
+	const DEFAULT_FT_OMIT_ITEMS = null;
 
     protected $_hooks = array(
     	'install', 
@@ -42,6 +42,7 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
         'srss_include_applink_footer' => self::DEFAULT_APP_STORE_LINKS,
         'srss_about_text' => self::DEFAULT_ABOUT_TEXT,
         'srss_image_url' => self::DEFAULT_IMAGE_URL,
+        'srss_omit_from_fieldtrip' => self::DEFAULT_FT_OMIT_ITEMS
     );
 
 
@@ -92,7 +93,8 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
         set_option('srss_include_social_footer', (int)(boolean)$_POST['srss_include_social_footer']);
         set_option('srss_include_applink_footer', (int)(boolean)$_POST['srss_include_applink_footer']);
         set_option('srss_include_read_more_link', (int)(boolean)$_POST['srss_include_read_more_link']);
-        set_option('srss_include_mediastats_footer', (int)(boolean)$_POST['srss_include_mediastats_footer']);     
+        set_option('srss_include_mediastats_footer', (int)(boolean)$_POST['srss_include_mediastats_footer']);  
+        set_option('srss_omit_from_fieldtrip', $_POST['srss_omit_from_fieldtrip']);   
         
     }	
     

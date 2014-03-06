@@ -1,5 +1,19 @@
 <?php
 
+function srss_is_omitted_item( $id=null, $cs_string=null ){
+
+	if(!empty($cs_string) && is_int($id)){
+
+		$omit_array=explode(',',$cs_string);
+
+		if(is_array($omit_array) && count($omit_array)>0){
+
+			return in_array($id,$omit_array);
+			
+			}	
+	}	
+}
+
 function srss_oxfordComma($items=null) {
 	$count = count($items);
 
