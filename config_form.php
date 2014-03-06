@@ -23,7 +23,7 @@
 	                    array('checked'=>(boolean)get_option('srss_include_read_more_link'))); ?>
 	
 	            <p class="explanation"><?php echo __(
-	                      'If checked, the text of each RSS item will include a link back to the original, reading "For more, view the original article."'
+	                      'If checked, the text of each RSS and/or FieldTrip item will include a link back to the original, reading "For more, view the original article."'
 	                    ); ?></p>
 	        </div>
 		</div>
@@ -39,7 +39,7 @@
 	                    array('checked'=>(boolean)get_option('srss_include_mediastats_footer'))); ?>
 	
 	            <p class="explanation"><?php echo __(
-	                      'If checked, the included "read more" link for each RSS item will contain details about media files for the item, e.g. "For more (including 8 images, 4 sound clips, and 1 video), view the original article."'
+	                      'If checked, the included "read more" link for each RSS and/or FieldTrip item will contain details about media files for the item, e.g. "For more (including 8 images, 4 sound clips, and 1 video), view the original article."'
 	                    ); ?></p>
 	        </div>
 		</div>
@@ -54,7 +54,7 @@
 	                    array('checked'=>(boolean)get_option('srss_include_social_footer'))); ?>
 	
 	            <p class="explanation"><?php echo __(
-	                      'If checked, the text of each RSS item will include links to configured social media profiles, e.g. "Find us on Facebook, Twitter and Youtube."'
+	                      'If checked, the text of each RSS and/or FieldTrip item will include links to configured social media profiles, e.g. "Find us on Facebook, Twitter and Youtube."'
 	                    ); ?></p>
 	        </div>
 		</div>
@@ -88,7 +88,7 @@
 
                 <div class="input-block">
                     <input type="text" class="textinput" name="srss_facebook_link" value="<?php echo get_option('srss_facebook_link'); ?>">
-                    <small><?php echo __("Example: http://www.facebook.com/your_page/"); ?></small>
+                    <small><?php echo __("Example: http://www.facebook.com/pages/your_page/12345"); ?></small>
                 </div>
             </div>
         </div>
@@ -157,7 +157,7 @@
 
 
 
-        <h3><?php echo __('FieldTrip Settings'); ?></h3>
+        <h3><?php echo __('Field Trip Settings'); ?></h3>
         <p><?php echo __('In addition to a custom RSS feed, SuperRSS allows site administrators to expose a content feed that is usable by the <a href="http://www.fieldtripper.com" target="_blank">Field Trip app</a>. Inclusion in Field Trip requires a content agreement with Google Inc. The following settings are required to create a valid Field Trip feed.'); ?></p>
 
         <div class="field">
@@ -166,7 +166,7 @@
             </div>
 
             <div class="inputs five columns omega">
-                <p class="explanation"><?php echo __("Enter text describing your content for Fieldtrip feed."); ?></p>
+                <p class="explanation"><?php echo __("Enter text describing your content for Field Trip feed."); ?></p>
 
                 <div class="input-block">
                     <textarea cols="50" rows="4" class="textinput" name="srss_about_text"><?php echo get_option('srss_about_text'); ?></textarea>
@@ -181,7 +181,7 @@
             </div>
 
             <div class="inputs five columns omega">
-                <p class="explanation"><?php echo __("URL for Fieldtrip feed image. Image <em>must be square</em>."); ?></p>
+                <p class="explanation"><?php echo __("URL for Field Trip feed image. Image <em>must be square</em>."); ?></p>
 
                 <div class="input-block">
                     <input type="text" class="textinput" name="srss_image_url" value="<?php echo get_option('srss_image_url'); ?>">
@@ -211,7 +211,7 @@
         <ul>
             <li>RSS/Atom output is available at: <?php echo '<a target="_blank" href="'.WEB_ROOT.'/items/browse?output=srss">/items/browse?output=srss</a>';?></li>
 
-            <li>Fieldtrip output is available at: <?php echo '<a target="_blank" href="'.WEB_ROOT.'/items/browse?output=fieldtrip">/items/browse?output=fieldtrip</a>';?></li>
+            <li>Field Trip output is available at: <?php echo '<a target="_blank" href="'.WEB_ROOT.'/items/browse?output=fieldtrip">/items/browse?output=fieldtrip</a>';?></li>
             
         </ul>
         
@@ -221,7 +221,6 @@
         ...best practice is to use PHP to check that the plugin is active:<br>
         <br>
         <span style="display:block;padding:.25em;background:#333;color:#fafafa;font-family:monospace"><?php echo htmlentities("<?php if(plugin_is_active('SuperRSS')){ echo '<link rel=\"alternate\" type=\"application/rss+xml\" title=\"New Posts: RSS\" href=\"'. html_escape(items_output_url('srss')) .'&per_page=15\" />';}?>");?></span><br>
-        <strong>Note on Fieldtrip output</strong>: the Fieldtrip output is useful for integrating your site content with Google's Fieldtrip app. Inclusion in Fieldtrip requires a contract with Google.
         <p>
     </div>
 </body>
