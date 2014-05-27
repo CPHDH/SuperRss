@@ -31,7 +31,7 @@ $blacklist=get_option( 'srss_omit_from_fieldtrip' );
 foreach( loop( 'items' ) as $omeka_item ) {
 
 	// If the item has a location, create the feed item element
-	if($point=srss_GeoRSSPoint($omeka_item) && !srss_is_omitted_item($omeka_item->id, $blacklist)){
+	if( ($point=srss_GeoRSSPoint($omeka_item)) && !srss_is_omitted_item($omeka_item->id, $blacklist) ){
 		
 		// add item element for the article
 		$feed_item = $xml->channel->addChild('item');
