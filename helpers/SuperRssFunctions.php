@@ -75,9 +75,9 @@ function srss_footer(){
 	
 	// Social Media Links
 	if(get_option('srss_include_social_footer')==1){
-		$fb=get_option('srss_facebook_link');
-		$tw=get_option('srss_twitter_user');
-		$yt=get_option('srss_youtube_user');
+		$fb=get_option('srss_facebook_link') ? get_option('srss_facebook_link') : null;
+		$tw=get_option('srss_twitter_user') ? get_option('srss_twitter_user') : null;
+		$yt= get_option('srss_youtube_user') ? get_option('srss_youtube_user') : null;
 		
 		if( $fb || $tw || $yt ){
 			$social=array();
