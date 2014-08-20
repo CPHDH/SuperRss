@@ -13,6 +13,25 @@
         <h3><?php echo __('General Settings'); ?></h3>
 
 
+
+		<div class="field">
+	        <div class="two columns alpha">
+	            <label for="srss_replace_default_rss"><?php echo __('Replace Default RSS Feed?'); ?></label>
+	        </div>
+	
+	        <div class="inputs five columns omega">
+	            <?php echo get_view()->formCheckbox('srss_replace_default_rss', true, 
+	                    array('checked'=>(boolean)get_option('srss_replace_default_rss'))); ?>
+	
+	            <p class="explanation"><?php echo __(
+	                      'If checked, the default RSS feed (?output=rss2) will be replaced by the Super RSS feed. If unchecked, the Super RSS feed will be available at ?output=srss. Adjust theme header accordingly. See <a href="#usage-information">Usage Information</a> below for additional details."'
+	                    ); ?></p>
+	        </div>
+		</div>
+
+
+
+
 		<div class="field">
 	        <div class="two columns alpha">
 	            <label for="srss_include_read_more_link"><?php echo __('Include link back to item?'); ?></label>
@@ -206,7 +225,7 @@
         </div>      
         
                                        
-        <h2>Usage Information</h2>
+        <h2 id="usage-information">Usage Information</h2>
         <p>The SuperRSS plugin adds 3 new output contexts to your site's browse views:</p>
         <ul>
             <li>RSS/Atom output is available at: <?php echo '<a target="_blank" href="'.WEB_ROOT.'/items/browse?output=srss">/items/browse?output=srss</a>';?></li>

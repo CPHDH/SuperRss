@@ -6,6 +6,7 @@ require_once dirname(__FILE__) . '/helpers/SuperRssFunctions.php';
 class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
 {
     
+    const DEFAULT_REPLACE_DEFAULT_RSS = 1;
     const DEFAULT_FB_LINK = null;
     const DEFAULT_TWITTER_USERNAME = null;
     const DEFAULT_YOUTUBE_USERNAME = null;
@@ -31,6 +32,7 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
 
 
     protected $_options = array(
+        'srss_replace_default_rss' => self::DEFAULT_REPLACE_DEFAULT_RSS,
         'srss_facebook_link' => self::DEFAULT_FB_LINK,
         'srss_twitter_user' => self::DEFAULT_TWITTER_USERNAME,
         'srss_youtube_user' => self::DEFAULT_YOUTUBE_USERNAME,
@@ -48,14 +50,24 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
 
 	public function filterResponseContexts( $contexts )
 	{
+		
+		if(get_option('srss_replace_default_rss')){
+			$contexts['rss2'] = array(
+				'suffix' => 'srss',
+				'headers' => array( 'Content-Type' => 'text/xml' )
+			);
+		}
+
 		$contexts['srss'] = array(
 			'suffix' => 'srss',
 			'headers' => array( 'Content-Type' => 'text/xml' )
 		);
+		
 		$contexts['fieldtrip'] = array(
 			'suffix' => 'fieldtrip',
 			'headers' => array( 'Content-Type' => 'text/xml' )
 		);	
+		
 		return $contexts;
 	}
 
@@ -63,7 +75,11 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
 		$controller = $args['controller'];
 
 		if( is_a( $controller, 'ItemsController' ) )
+		
 		{
+			if(get_option('srss_replace_default_rss')){
+				$contexts['browse'][] = 'rss2' ;
+			}	
 			$contexts['browse'][] = 'srss' ;
 			$contexts['browse'][] = 'fieldtrip' ;
 		}
@@ -83,6 +99,7 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
         
     public function hookConfig()
     {
+        set_option('srss_replace_default_rss', $_POST['srss_replace_default_rss']);
         set_option('srss_facebook_link', $_POST['srss_facebook_link']);
         set_option('srss_twitter_user', $_POST['srss_twitter_user']);
         set_option('srss_youtube_user', $_POST['srss_youtube_user']);
