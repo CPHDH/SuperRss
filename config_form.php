@@ -24,7 +24,7 @@
 	                    array('checked'=>(boolean)get_option('srss_replace_default_rss'))); ?>
 	
 	            <p class="explanation"><?php echo __(
-	                      'If checked, the default RSS feed (?output=rss2) will be replaced by the Super RSS feed. If unchecked, the Super RSS feed will be available at ?output=srss. Adjust theme header accordingly. See <a href="#usage-information">Usage Information</a> below for additional details."'
+	                      'If checked, the default RSS feed at <a target="_blank" href="'.WEB_ROOT.'/items/browse?output=rss2">/items/browse?output=rss2</a> will be replaced by the Super RSS feed. If unchecked, the Super RSS feed will be available at <a target="_blank" href="'.WEB_ROOT.'/items/browse?output=srss">/items/browse?output=srss</a>. Adjust theme header as needed. See <a href="#usage-information">Usage Information</a> below for additional details."'
 	                    ); ?></p>
 	        </div>
 		</div>
@@ -226,7 +226,7 @@
         
                                        
         <h2 id="usage-information">Usage Information</h2>
-        <p>The SuperRSS plugin adds 3 new output contexts to your site's browse views:</p>
+        <p>The SuperRSS plugin adds 2 new output contexts to your site's browse views:</p>
         <ul>
             <li>RSS/Atom output is available at: <?php echo '<a target="_blank" href="'.WEB_ROOT.'/items/browse?output=srss">/items/browse?output=srss</a>';?></li>
 
@@ -234,13 +234,6 @@
             
         </ul>
         
-        <strong>Include the RSS link in theme header</strong>: currently, the RSS feed must be manually added to your site's theme header:<br>
-        <br>
-        <span style="display:block;padding:.25em;background:#333;color:#fafafa;font-family:monospace"><?php echo htmlentities('<link rel="alternate" type="application/rss+xml" title="New Posts: RSS" href="/items/browse?output=srss&per_page=15" />');?></span><br>
-        ...best practice is to use PHP to check that the plugin is active:<br>
-        <br>
-        <span style="display:block;padding:.25em;background:#333;color:#fafafa;font-family:monospace"><?php echo htmlentities("<?php if(plugin_is_active('SuperRSS')){ echo '<link rel=\"alternate\" type=\"application/rss+xml\" title=\"New Posts: RSS\" href=\"'. html_escape(items_output_url('srss')) .'&per_page=15\" />';}?>");?></span><br>
-        <p>
     </div>
 </body>
 </html>
