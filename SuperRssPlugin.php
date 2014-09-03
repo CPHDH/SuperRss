@@ -7,18 +7,10 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
 {
     
     const DEFAULT_REPLACE_DEFAULT_RSS = 1;
-    const DEFAULT_FB_LINK = null;
-    const DEFAULT_TWITTER_USERNAME = null;
-    const DEFAULT_YOUTUBE_USERNAME = null;
-    const DEFAULT_IOS_APP_ID = null;
-    const DEFAULT_ANDROID_APP_ID = null;
     const DEFAULT_READ_MORE = 1;
     const DEFAULT_READ_MORE_STATS = 1;
     const DEFAULT_SOCIAL_MEDIA_LINKS = 1;
     const DEFAULT_APP_STORE_LINKS = 0;
-    const DEFAULT_ABOUT_TEXT = null;
-    const DEFAULT_IMAGE_URL = null;
-	const DEFAULT_FT_OMIT_ITEMS = null;
 
     protected $_hooks = array(
     	'install', 
@@ -33,18 +25,18 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
 
     protected $_options = array(
         'srss_replace_default_rss' => self::DEFAULT_REPLACE_DEFAULT_RSS,
-        'srss_facebook_link' => self::DEFAULT_FB_LINK,
-        'srss_twitter_user' => self::DEFAULT_TWITTER_USERNAME,
-        'srss_youtube_user' => self::DEFAULT_YOUTUBE_USERNAME,
-        'srss_ios_id' => self::DEFAULT_IOS_APP_ID,
-        'srss_android_id' => self::DEFAULT_ANDROID_APP_ID,
         'srss_include_read_more_link' => self::DEFAULT_READ_MORE,
         'srss_include_mediastats_footer' => self::DEFAULT_READ_MORE_STATS,
         'srss_include_social_footer' => self::DEFAULT_SOCIAL_MEDIA_LINKS,
         'srss_include_applink_footer' => self::DEFAULT_APP_STORE_LINKS,
-        'srss_about_text' => self::DEFAULT_ABOUT_TEXT,
-        'srss_image_url' => self::DEFAULT_IMAGE_URL,
-        'srss_omit_from_fieldtrip' => self::DEFAULT_FT_OMIT_ITEMS
+        'srss_facebook_link' => null,
+        'srss_twitter_user' => null,
+        'srss_youtube_user' => null,
+        'srss_ios_id' => null,
+        'srss_android_id' => null,
+        'srss_about_text' => null,
+        'srss_image_url' => null,
+        'srss_omit_from_fieldtrip' => null
     );
 
 
