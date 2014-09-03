@@ -177,7 +177,7 @@
 
 
         <h3><?php echo __('Field Trip Settings'); ?></h3>
-        <p><?php echo __('In addition to a custom RSS feed, SuperRSS allows site administrators to expose a content feed that is usable by the <a href="http://www.fieldtripper.com" target="_blank">Field Trip app</a>. Inclusion in Field Trip requires a content agreement with Google Inc. The following settings are required to create a valid Field Trip feed.'); ?></p>
+        <p><?php echo __('In addition to a custom RSS feed, SuperRSS allows site administrators to expose a content feed that is usable by the <a href="http://www.fieldtripper.com" target="_blank">Field Trip app</a>. Inclusion in Field Trip requires a content agreement with Google Inc.'); ?></p>
 
         <div class="field">
             <div class="two columns alpha">
