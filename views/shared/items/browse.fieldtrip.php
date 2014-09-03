@@ -56,9 +56,7 @@ foreach( loop( 'items' ) as $omeka_item ) {
 	$continue_link='<p><em>'.__('For more%s, view the original article.',$srss_media_info['stats_link']).'</em></p>';
 
 	$content='';
-	$content .= metadata( $omeka_item, array( 'Dublin Core', 'Description' )) ?
-		metadata( $omeka_item, array( 'Dublin Core', 'Description' )) :
-		'No content';
+	$content .= srss_the_text($omeka_item);
 	$content=srss_br2p($content).$continue_link;
 
 	// Build the feed item
