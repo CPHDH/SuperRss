@@ -91,6 +91,27 @@ function srss_footer(){
 	return $footer;
 }
 
+function srss_the_text($item='item',$options=array()){
+	
+	$dc_desc = metadata($item, array('Dublin Core', 'Description'),$options);
+	$primary_text = element_exists('Item Type Metadata','Story') ? metadata($item,array('Item Type Metadata', 'Story'),$options) : null;
+	
+	return $primary_text ? $primary_text : ($dc_desc ? $dc_desc : 'No Content Available');
+}
+
+
+/*
+** Subtitle 
+*/
+
+function srss_the_subtitle($item=null,$pre=null,$post=null){
+
+	$dc_title2 = metadata($item, array('Dublin Core', 'Title'), array('index'=>1));
+	$subtitle=element_exists('Item Type Metadata','Subtitle') ? metadata($item,array('Item Type Metadata', 'Subtitle')) : null;
+	
+	return  $subtitle ? $pre.$subtitle.$post : ($dc_title2!=='[Untitled]' ? $pre.$dc_title2.$post : null);
+}
+
 function srss_authors($authors){
 	if(count($authors)>0){
 		$all_authors=array();
