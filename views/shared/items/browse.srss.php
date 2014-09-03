@@ -26,6 +26,7 @@ foreach( loop( 'items' ) as $item )
 	$title=  metadata( $item, array( 'Dublin Core', 'Title' ) ) ?
 		metadata( $item, array( 'Dublin Core', 'Title' ) ) :
 		'No title';
+		$title.=srss_the_subtitle($item,' – ');
 
 	$author = srss_authors( metadata( $item, array( 'Dublin Core', 'Creator' ),array('all'=>true) ) );
 
@@ -37,9 +38,7 @@ foreach( loop( 'items' ) as $item )
 
 	$content='';
 	$content=$srss_media_info['hero_img']['src'] ? '<img src="'.$srss_media_info['hero_img']['src'].'" alt="'.$srss_media_info['hero_img']['title'].'" /><br/>' : null;
-	$content .= metadata( $item, array( 'Dublin Core', 'Description' )) ?
-		metadata( $item, array( 'Dublin Core', 'Description' )) :
-		'No content';
+	$content .= srss_the_text($item);
 	$content=srss_br2p($content).$continue_link;
 
 
