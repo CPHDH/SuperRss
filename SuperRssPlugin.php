@@ -9,7 +9,7 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
     const DEFAULT_REPLACE_DEFAULT_RSS = 1;
     const DEFAULT_READ_MORE = 1;
     const DEFAULT_READ_MORE_STATS = 1;
-    const DEFAULT_SOCIAL_MEDIA_LINKS = 1;
+    const DEFAULT_SOCIAL_MEDIA_LINKS = 0;
     const DEFAULT_APP_STORE_LINKS = 0;
     const DEFAULT_ENABLE_FIELDTRIP = 0;
 
@@ -68,11 +68,14 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
 	}
 
 	public function filterActionContexts( $contexts, $args ) {
+		
 		$controller = $args['controller'];
 
 		if( is_a( $controller, 'ItemsController' ) )
 		
 		{
+			$contexts['browse'][] = 'srss' ;
+			
 			if(get_option('srss_replace_default_rss')){
 				$contexts['browse'][] = 'rss2' ;
 			}	
