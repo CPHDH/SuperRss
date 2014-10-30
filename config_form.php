@@ -186,11 +186,24 @@
 
             <div class="inputs five columns omega">
                 <p class="explanation"><?php echo __("Enter text describing your content for Field Trip feed."); ?></p>
+<div class="field fieldtrip master">
+    <div class="two columns alpha">
+        <label for="srss_enable_ft"><?php echo __('Enable Field Trip Feed?'); ?></label>
+    </div>
 
                 <div class="input-block">
                     <textarea cols="50" rows="4" class="textinput" name="srss_about_text"><?php echo get_option('srss_about_text'); ?></textarea>
                 </div>
             </div>
+    <div class="inputs five columns omega">
+        <?php echo get_view()->formCheckbox('srss_enable_ft', true, 
+                array('checked'=>(boolean)get_option('srss_enable_ft'))); ?>
+
+        <p class="explanation"><?php echo __(
+                  'If checked, the Field Trip feed will be activated. Field Trip output is available at <a target="_blank" href="'.WEB_ROOT.'/items/browse?output=fieldtrip">/items/browse?output=fieldtrip</a>.'
+                ); ?></p>
+    </div>
+</div>
         </div>
 
 
