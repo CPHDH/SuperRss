@@ -1,4 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<style>
+.child{padding:1em;background: #eaeaea;display: inline-block;;}
+.child .columns.omega{margin-left: 0;} 
+</style>
 
 <html>
 <head>
@@ -249,4 +253,12 @@
         
     </div>
 </body>
-</html>
+</html><script>
+	
+	jQuery('fieldset .child').hide();
+	jQuery('.field.master input:checked').parentsUntil('fieldset','.master').addClass('checked').siblings('.child').show();
+	jQuery('.field.master input').change(function(){
+		jQuery(this).parentsUntil('fieldset','.master').toggleClass('checked').siblings('.child').slideToggle();
+	});	
+
+</script>	                                       
