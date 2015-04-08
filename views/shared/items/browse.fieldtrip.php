@@ -48,6 +48,8 @@ foreach( loop( 'items' ) as $omeka_item ) {
 	$title=  metadata( $omeka_item, array( 'Dublin Core', 'Title' ) ) ?
 		metadata( $omeka_item, array( 'Dublin Core', 'Title' ) ) :
 		'No title';
+	
+	$byline = metadata( $omeka_item, array( 'Dublin Core', 'Creator' ),array('all'=>true) ) ? '<em> – By '.srss_authors( metadata( $omeka_item, array( 'Dublin Core', 'Creator' ),array('all'=>true) ) ).'</em> ' : '';	
 
 	$url = WEB_ROOT.'/items/show/'.$omeka_item->id;
 
@@ -57,7 +59,7 @@ foreach( loop( 'items' ) as $omeka_item ) {
 
 	$content='';
 	$content .= srss_the_text($omeka_item);
-	$content=srss_br2p($content).$continue_link;
+	$content=srss_br2p($content).$byline.$continue_link;
 
 	// Build the feed item
 	$feed_item->title=null;
