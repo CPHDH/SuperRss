@@ -1,5 +1,5 @@
 <style>
-.child{padding:1em;background: #eaeaea;display: inline-block;;}
+.child{padding:1em;background: #eaeaea;display: inline-block;}
 .child .columns.omega{margin-left: 0;} 
 </style>
 
