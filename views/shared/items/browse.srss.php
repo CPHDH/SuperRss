@@ -3,10 +3,13 @@
 /**
  * Create the parent feed
  */
+ 
+$location = WEB_ROOT.'/items/browse?output='.( (get_option('srss_replace_default_rss')==1) ? 'rss2' : 'srss' );
+
 $feed = new Zend_Feed_Writer_Feed;
 $feed->setTitle(option('site_title'));
-$feed->setLink(WEB_ROOT);
-$feed->setFeedLink(WEB_ROOT.'/items/browse?output=srss', 'atom');
+$feed->setLink(WEB_ROOT.'/');
+$feed->setFeedLink($location, 'atom');
 $feed->addAuthor(array(
 		'name'  => option('site_title'),
 		'uri'   => WEB_ROOT,
