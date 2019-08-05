@@ -79,9 +79,10 @@ function srss_footer(){
 ** Primary Content
 */
 function srss_the_text($item='item',$options=array()){
-	$dc_desc = metadata($item, array('Dublin Core', 'Description'),$options);
-	$primary_text = element_exists('Item Type Metadata','Story') ? metadata($item,array('Item Type Metadata', 'Story'),$options) : null;
-	return $primary_text ? $primary_text : ($dc_desc ? $dc_desc : 'No Content Available');
+	$lede = element_exists('Item Type Metadata','Lede') ? '<p><strong><em>'.metadata($item,array('Item Type Metadata', 'Lede'),$options).'</em></strong></p>' : null;
+	$dc_desc = metadata($item, array('Dublin Core', 'Description'),$options) ? metadata($item, array('Dublin Core', 'Description'),$options) : 'No Content Available';
+	$story = element_exists('Item Type Metadata','Story') ? metadata($item,array('Item Type Metadata', 'Story'),$options) : $dc_desc;
+	return $lede.srss_br2p($story);
 }
 
 /*
