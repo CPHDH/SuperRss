@@ -11,13 +11,13 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
     const DEFAULT_READ_MORE_STATS = 1;
     const DEFAULT_SOCIAL_MEDIA_LINKS = 0;
     const DEFAULT_APP_STORE_LINKS = 0;
-    const DEFAULT_ENABLE_FIELDTRIP = 0;
 
     protected $_hooks = array(
     	'install', 
     	'uninstall',
         'config_form', 
         'config');
+		'upgrade',
 
 	protected $_filters = array(
 		'response_contexts',
@@ -30,15 +30,11 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
         'srss_include_mediastats_footer' => self::DEFAULT_READ_MORE_STATS,
         'srss_include_social_footer' => self::DEFAULT_SOCIAL_MEDIA_LINKS,
         'srss_include_applink_footer' => self::DEFAULT_APP_STORE_LINKS,
-        'srss_enable_ft'=>self::DEFAULT_ENABLE_FIELDTRIP,        
         'srss_facebook_link' => null,
         'srss_twitter_user' => null,
         'srss_youtube_user' => null,
         'srss_ios_id' => null,
         'srss_android_id' => null,
-        'srss_about_text' => null,
-        'srss_image_url' => null,
-        'srss_omit_from_fieldtrip' => null
     );
 
 
@@ -57,13 +53,6 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
 			'headers' => array( 'Content-Type' => 'text/xml' )
 		);
 		
-		if(get_option('srss_enable_ft')){
-			$contexts['fieldtrip'] = array(
-				'suffix' => 'fieldtrip',
-				'headers' => array( 'Content-Type' => 'text/xml' )
-			);	
-		}
-		
 		return $contexts;
 	}
 
@@ -80,9 +69,6 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
 				$contexts['browse'][] = 'rss2' ;
 			}	
 			
-			if(get_option('srss_enable_ft')){
-				$contexts['browse'][] = 'fieldtrip' ;
-			}
 		}
 
 		return $contexts;
@@ -112,9 +98,6 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
         set_option('srss_include_applink_footer', (int)(boolean)$_POST['srss_include_applink_footer']);
         set_option('srss_include_read_more_link', (int)(boolean)$_POST['srss_include_read_more_link']);
         set_option('srss_include_mediastats_footer', (int)(boolean)$_POST['srss_include_mediastats_footer']);  
-        set_option('srss_enable_ft', (int)(boolean)$_POST['srss_enable_ft']); 
-        set_option('srss_omit_from_fieldtrip', $_POST['srss_omit_from_fieldtrip']);   
-        
     }	
     
 
@@ -125,6 +108,19 @@ class SuperRssPlugin extends Omeka_Plugin_AbstractPlugin
     {		
 		$this->_installOptions();    
     
+    /**
+     * Upgrade
+     */
+    public function hookUpgrade($args)
+    {
+      $oldVersion = $args['old_version'];
+      $newVersion = $args['new_version'];
+      if ($oldVersion < '1.1.0') {      
+  	    delete_option('srss_omit_from_fieldtrip');
+        delete_option('srss_enable_ft');
+        delete_option('srss_about_text');
+        delete_option('srss_image_url');
+      }
     }
 
     /**

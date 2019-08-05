@@ -1,19 +1,4 @@
 <?php
-
-function srss_is_omitted_item( $id=null, $cs_string=null ){
-
-	if(!empty($cs_string) && is_int($id)){
-
-		$omit_array=explode(',',$cs_string);
-
-		if(is_array($omit_array) && count($omit_array)>0){
-
-			return in_array($id,$omit_array);
-			
-			}	
-	}	
-}
-
 function srss_oxfordComma($items=null) {
 	$count = count($items);
 
@@ -29,21 +14,6 @@ function srss_oxfordComma($items=null) {
 function srss_br2p($data) {
 	$data = preg_replace('#(?:<br\s*/?>\s*?){2,}#', '</p><p>', $data);
 	return "<p>$data</p>";
-}
-
-function srss_GeoRSSPoint($item=null){
-	if(
-		($item !==null)
-		&& (plugin_is_active('Geolocation'))
-		&& ($location = get_db()->getTable( 'Location' )->findLocationByItem( $item, true ))
-	){
-
-		$lat = $location['latitude'];
-		$lon = $location['longitude'];
-
-		return $lat.' '.$lon;
-
-	}
 }
 
 function srss_get_page_url() {
