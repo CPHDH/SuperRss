@@ -9,7 +9,7 @@ function srss_oxfordComma($items=null) {
 	} else if($count === 1) {
 			return $items[0];
 		} else {
-		return implode(' , ', array_slice($items, 0, $count - 1)) . ' and ' . $items[$count - 1];
+		return implode(', ', array_slice($items, 0, $count - 1)) . ' and ' . $items[$count - 1];
 	}
 }
 
