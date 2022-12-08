@@ -53,7 +53,7 @@ function srss_footer(){
 			$app_store=array();
 			isset($adk) ? $app_store[]='<a href="http://play.google.com/store/apps/details?id='.$adk.'">Android</a>' : null;
 			isset($ios) ? $app_store[]='<a href="https://itunes.apple.com/us/app/'.$ios.'">iPhone</a>' : null;
-			$footer.='<small>'.__('Download the '.option('site_title').' app for %s', implode($app_store, ' and ')).'</small>';
+			$footer.='<small>'.__('Download the '.option('site_title').' app for %s', implode(' and ',$app_store)).'</small>';
 		}
 	}
 
